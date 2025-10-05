@@ -1,0 +1,19 @@
+# customer/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.customer_dashboard, name='customer_dashboard'),
+    path('register/', views.customer_register, name='customer_register'),
+    path('login/', views.customer_login, name='customer_login'),
+    path('logout/', views.customer_logout, name='customer_logout'),
+    path('dashboard/', views.customer_dashboard, name='customer_dashboard'),
+    path('ticket/create/', views.ticket_create, name='ticket_create'),
+    path('ticket/view/', views.ticket_list_admin, name='ticket_list_admin'),
+    path('ticket/StatusUpdate/<int:ticket_id>', views.ticket_update_status, name='ticket_update_status'),
+    path('ticket/<int:ticket_id>/edit/', views.ticket_edit, name='ticket_edit'),
+    # path('tickets/<int:ticket_id>/', views.ticket_detail, name='ticket_detail'),
+    path('tickets/<int:ticket_id>/assign/', views.ticket_assign, name='ticket_assign'),
+    path('tickets/<int:ticket_id>/assign/save/', views.ticket_assign_save, name='ticket_assign_save'),
+    
+]

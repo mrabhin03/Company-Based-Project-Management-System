@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Edit{% endblock %}
+
+{% block content %}
+<h2>Edit Employee: {{ profile.user.username }}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ user_form.as_p }}
+  {{ profile_form.as_p }}
+  <button type="submit">Save</button>
+</form>
+<p><a href="{% url 'employee_list' %}">Back to list</a></p>
+{% endblock %}

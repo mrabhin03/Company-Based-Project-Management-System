@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.user.username }}{% endblock %}
+
+{% block content %}
+<h2>{{ profile.user.username }} ({{ profile.user.role }})</h2>
+
+<div style="margin-bottom: 15px;">
+    <p><strong>Email:</strong> {{ profile.user.email }}</p>
+    <p><strong>Phone:</strong> {{ profile.user.phone }}</p>
+    <p><strong>Department:</strong> {{ profile.department }}</p>
+    <p><strong>Position:</strong> {{ profile.position }}</p>
+    <p><strong>Date of Joining:</strong> {{ profile.date_of_joining }}</p>
+    <p><strong>Salary:</strong> {{ profile.salary }}</p>
+</div>
+
+{% endblock %}

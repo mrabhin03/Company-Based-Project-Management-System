@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Performance Overview{% endblock %}
+
+{% block content %}
+<h2>Performance Overview</h2>
+
+{% if reports %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Employee</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Total Tasks</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Completed</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Pending</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Overdue</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Score (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for report in reports %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.employee.user.username }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.total_tasks }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.completed_tasks }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.pending_tasks }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.overdue_tasks }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.performance_score|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No performance data yet.</p>
+{% endif %}
+
+{% endblock %}

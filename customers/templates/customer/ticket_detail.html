@@ -1,0 +1,4 @@
+<h2>{{ ticket.title }}</h2>
+<p>Status: {{ ticket.status }}</p>
+<p>Description: {{ ticket.description }}</p>
+<p>Assigned To: {{ ticket.assigned_to.username if ticket.assigned_to else "Not assigned" }}</p>

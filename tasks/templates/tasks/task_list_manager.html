@@ -1,0 +1,18 @@
+<h2>Manager Task List</h2>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Assigned To</th>
+        <th>Status</th>
+        <th>Deadline</th>
+    </tr>
+    {% for task in tasks %}
+    <tr>
+        <td>{{ task.title }}</td>
+        <td>{{ task.assigned_to.username }}</td>
+        <td>{{ task.status }}</td>
+        <td>{{ task.deadline }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'task_create' %}">Create Task</a>

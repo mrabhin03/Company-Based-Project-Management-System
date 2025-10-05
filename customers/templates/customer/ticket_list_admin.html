@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}All Tickets{% endblock %}
+
+{% block content %}
+<h2>All Tickets</h2>
+
+{% if tickets %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">ID</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Customer</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in tickets %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.id }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.customer.user.username }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.subject }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.status }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'ticket_edit' ticket.id %}">View</a>
+                {% if ticket.status != 'COMPLETED' %}
+                | <a href="{% url 'ticket_assign' ticket.id %}">Assign</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No tickets available.</p>
+{% endif %}
+
+
+{% endblock %}

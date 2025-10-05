@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}All Tickets{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+<p>Welcome, {{ request.user.username }}</p>
+
+
+<h3>My Tickets</h3>
+<p>
+    <a href="{% url 'ticket_create' %}">Create Ticket</a> 
+</p>
+<table >
+    <tr>
+        <th>#</th>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for ticket in tickets %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ ticket.subject }}</td>
+        <td>{{ ticket.status }}</td>
+        <td>
+            <a href="{% url 'ticket_edit' ticket.id %}">Edit</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No tickets found.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

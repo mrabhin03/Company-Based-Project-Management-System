@@ -1,0 +1,13 @@
+<h2>Welcome, {{ user.username }}!</h2>
+<p>Role: {{ user.role }}</p>
+
+{% if user.role == 'ADMIN' %}
+    <p><a href="{% url 'employee_register' %}">Register New Employee</a></p>
+    <p><a href="{% url 'employee_list' %}">View All Employees</a></p>
+{% elif user.role == 'MANAGER' %}
+    <p><a href="{% url 'department_employee_list' %}">View Department Employees</a></p>
+{% else %}
+    <p><a href="{% url 'employee_profile' user.id %}">View Your Profile</a></p>
+{% endif %}
+
+<p><a href="{% url 'logout' %}">Logout</a></p>
