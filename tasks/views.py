@@ -55,10 +55,10 @@ def task_edit(request, task_id):
             return redirect('task_list_admin')
     else:
         form = TaskFormEdit(instance=task)
-        if request.user.role == 'MANAGER':
-            form.fields['assigned_to'].queryset = EmployeeProfile.objects.filter(
-                department=request.user.employeeprofile.department
-            )
+        # if request.user.role == 'MANAGER':
+        #     form.fields['assigned_to'].queryset = EmployeeProfile.objects.filter(
+        #         department=request.user.employeeprofile.department
+        #     )
     return render(request, 'tasks/task_edit.html', {'form': form})
 
 # ------------------- Employee -------------------

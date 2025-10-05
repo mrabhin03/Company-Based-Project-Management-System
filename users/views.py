@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout, authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
-from .forms import CustomUserForm, EmployeeProfileForm, CustomLoginForm
+from .forms import CustomUserForm, EmployeeProfileForm, CustomLoginForm,UserFormEdit
 from .models import EmployeeProfile, Payroll
 from .forms import PayrollForm,PayrollFilterForm
 from django.db.models import Max
@@ -109,7 +109,7 @@ def employee_register(request):
 def edit_employee(request, profile_id):
     profile = get_object_or_404(EmployeeProfile, id=profile_id)
     if request.method == 'POST':
-        user_form = CustomUserForm(request.POST, instance=profile.user)
+        user_form = UserFormEdit(request.POST, instance=profile.user)
         profile_form = EmployeeProfileForm(request.POST, instance=profile)
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
@@ -117,7 +117,7 @@ def edit_employee(request, profile_id):
             profile_form.save()
             return redirect('employee_list')
     else:
-        user_form = CustomUserForm(instance=profile.user)
+        user_form = UserFormEdit(instance=profile.user)
         profile_form = EmployeeProfileForm(instance=profile)
     return render(request, 'users/edit_employee.html', {'user_form': user_form, 'profile_form': profile_form, 'profile': profile})
 

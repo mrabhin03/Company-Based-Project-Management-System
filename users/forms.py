@@ -9,6 +9,11 @@ class CustomUserForm(UserCreationForm):
         model = CustomUser
         fields = ['username', 'email', 'role', 'phone', 'password1', 'password2']
 
+class UserFormEdit(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'role', 'phone']
+
 class EmployeeProfileForm(forms.ModelForm):
     class Meta:
         model = EmployeeProfile
