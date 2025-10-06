@@ -1,4 +1,32 @@
-<h2>{{ ticket.title }}</h2>
-<p>Status: {{ ticket.status }}</p>
-<p>Description: {{ ticket.description }}</p>
-<p>Assigned To: {{ ticket.assigned_to.username if ticket.assigned_to else "Not assigned" }}</p>
+{% extends 'base.html' %}
+
+{% block title %}Ticket Details{% endblock %}
+
+{% block content %}
+<h2>Ticket Details</h2>
+
+<table>
+    <tr>
+        <th>Project</th>
+        <td>{{ ticket.subject }}</td>
+    </tr>
+    <tr>
+        <th>Customer</th>
+        <td>{{ ticket.customer.user.name }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ ticket.status }}</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>{{ ticket.description }}</td>
+    </tr>
+    <tr>
+        <th>Created At</th>
+        <td>{{ ticket.created_at }}</td>
+    </tr>
+</table>
+
+<br>
+{% endblock %}

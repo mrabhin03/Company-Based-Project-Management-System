@@ -5,14 +5,10 @@ from .models import CustomUser, EmployeeProfile
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ('username', 'email', 'role', 'is_staff', 'is_active')
+    list_display = ('username','name', 'email', 'role',  'is_staff', 'is_active') 
+    
     list_filter = ('role', 'is_staff', 'is_active')
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('role', 'phone')}),
-    )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('role', 'phone')}),
-    )
+    # list_editable = ('name', 'email') 
 
 admin.site.register(CustomUser, CustomUserAdmin)
 

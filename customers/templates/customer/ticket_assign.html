@@ -118,7 +118,7 @@ assignType.addEventListener('change', () => {
 // Employee data
 const employees = [
   {% for emp in employees %}
-    {id: "{{ emp.id }}", name: "{{ emp.user.username }}"},
+    {id: "{{ emp.id }}", name: "{{ emp.user.name }}"},
   {% endfor %}
 ];
 

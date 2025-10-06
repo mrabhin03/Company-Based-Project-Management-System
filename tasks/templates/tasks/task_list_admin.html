@@ -26,7 +26,7 @@
         <tr>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.title }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.assigned_to.user.username }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.assigned_to.user.name }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.status }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.deadline|date:"Y-m-d" }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">

@@ -3,9 +3,10 @@
 {% block title %}{{ profile.user.username }}{% endblock %}
 
 {% block content %}
-<h2>{{ profile.user.username }} ({{ profile.user.role }})</h2>
+<h2>{{ profile.user.name }} ({{ profile.user.role }})</h2>
 
 <div style="margin-bottom: 15px;">
+    <p><strong>Username:</strong> {{ profile.user.username }}</p>
     <p><strong>Email:</strong> {{ profile.user.email }}</p>
     <p><strong>Phone:</strong> {{ profile.user.phone }}</p>
     <p><strong>Department:</strong> {{ profile.department }}</p>

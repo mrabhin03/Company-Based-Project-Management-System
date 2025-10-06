@@ -13,6 +13,7 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Department</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
@@ -22,6 +23,7 @@
     <tbody>
         {% for pos in positions %}
         <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ pos.title }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ pos.department.name }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ pos.description }}</td>

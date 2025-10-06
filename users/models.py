@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
         (ROLE_EMPLOYEE, 'Employee'),
         (ROLE_CUSTOMER,'Customer')
     )
-
+    name=models.CharField(max_length=500,null=False)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_EMPLOYEE)
     phone = models.CharField(max_length=15, blank=True, null=True)
 
@@ -50,7 +50,7 @@ class EmployeeProfile(models.Model):
     
 class Payroll(models.Model):
     employee = models.ForeignKey('EmployeeProfile', on_delete=models.CASCADE, related_name='payrolls')
-    month = models.DateField()  # usually the first day of the month
+    month = models.DateField()  
     base_salary = models.DecimalField(max_digits=10, decimal_places=2)
     bonuses = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0)

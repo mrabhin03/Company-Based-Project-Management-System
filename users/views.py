@@ -80,8 +80,7 @@ def employee_register(request):
     if request.method == 'POST':
         user_form = CustomUserForm(request.POST)
         profile_form = EmployeeProfileForm(request.POST)
-        payroll_form = PayrollForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid() and payroll_form.is_valid():
+        if user_form.is_valid() and profile_form.is_valid() :
             # Create User and Employee Profile
             user = user_form.save()
             profile = profile_form.save(commit=False)
@@ -89,21 +88,14 @@ def employee_register(request):
             profile.save()
             profile_form.save_m2m()
 
-            # Create Payroll linked to Employee
-            payroll = payroll_form.save(commit=False)
-            payroll.employee = profile
-            payroll.save()
-
             return redirect('employee_list')
     else:
         user_form = CustomUserForm()
         profile_form = EmployeeProfileForm()
-        payroll_form = PayrollForm()
 
     return render(request, 'users/employee_register.html', {
         'user_form': user_form,
-        'profile_form': profile_form,
-        'payroll_form': payroll_form
+        'profile_form': profile_form
     })
 @user_passes_test(lambda u: u.is_authenticated and u.role in [User.ROLE_ADMIN, User.ROLE_MANAGER], login_url='login')
 def edit_employee(request, profile_id):
@@ -150,7 +142,7 @@ def payroll_add(request, employee_id):
             payroll.save()
             return redirect('payroll_list', employee_id=employee.id)
     else:
-        form = PayrollForm()
+        form = PayrollForm(initial={'base_salary': employee.salary})
     return render(request, 'users/payroll_add.html', {'form': form, 'employee': employee})
 
 @user_passes_test(is_admin)

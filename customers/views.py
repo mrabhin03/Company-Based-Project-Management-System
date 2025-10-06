@@ -76,6 +76,10 @@ def ticket_edit(request, ticket_id):
         form = TicketForm(instance=ticket)
     return render(request, 'customer/ticket_form.html', {'form': form})
 
+def ticket_detail(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    return render(request, 'customer/ticket_detail.html', {'ticket': ticket})
+
 
 def ticket_list_admin(request):
     tickets = Ticket.objects.all()

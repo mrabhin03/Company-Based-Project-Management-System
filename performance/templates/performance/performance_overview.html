@@ -9,6 +9,7 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Employee</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Total Tasks</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Completed</th>
@@ -20,7 +21,8 @@
     <tbody>
         {% for report in reports %}
         <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.employee.user.username }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.employee.user.name }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.total_tasks }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.completed_tasks }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ report.pending_tasks }}</td>

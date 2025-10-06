@@ -7,19 +7,22 @@ from datetime import date
 class CustomUserForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'role', 'phone', 'password1', 'password2']
+        fields = ['name','username', 'email', 'role', 'phone', 'password1', 'password2']
 
 class UserFormEdit(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'role', 'phone']
+        fields = ['name','username', 'email', 'role', 'phone']
 
 class EmployeeProfileForm(forms.ModelForm):
     class Meta:
         model = EmployeeProfile
         fields = ['department', 'position', 'benefits', 'date_of_joining', 'salary']
         widgets = {
-            'benefits': forms.CheckboxSelectMultiple()
+            'benefits': forms.CheckboxSelectMultiple(),
+            'date_of_joining': forms.DateInput(
+                attrs={'type': 'date'}
+            ),
         }
 
 
@@ -39,12 +42,16 @@ from django import forms
 from .models import Payroll
 
 class PayrollForm(forms.ModelForm):
+    month = forms.DateField(
+        input_formats=['%Y-%m'], 
+        widget=forms.DateInput(
+            format='%Y-%m',
+            attrs={'type': 'month'}
+        )
+    )
     class Meta:
         model = Payroll
         fields = ['base_salary', 'bonuses', 'deductions', 'month', 'is_paid']
-        widgets = {
-            'month': forms.SelectDateWidget(years=range(2023, 2031)),
-        }
 
 
 MONTH_CHOICES = [(i, date(1900, i, 1).strftime('%B')) for i in range(1, 13)]

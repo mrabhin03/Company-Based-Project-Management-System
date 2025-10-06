@@ -72,9 +72,8 @@ class Task(models.Model):
                 self.ticket.status = 'RESOLVED'
                 ticket_updated = True
         else:
-            if current_ticket_status in ['RESOLVED', 'CLOSED']:
+            if current_ticket_status in ['RESOLVED', 'CLOSED','PENDING']:
                 self.ticket.status = 'IN_PROGRESS'
                 ticket_updated = True
-
         if ticket_updated:
             self.ticket.save(update_fields=['status'])

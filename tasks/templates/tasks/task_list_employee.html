@@ -9,6 +9,7 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
@@ -19,6 +20,7 @@
     <tbody>
         {% for task in tasks %}
         <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.title }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.description }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.status }}</td>

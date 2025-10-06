@@ -14,19 +14,27 @@
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr style="background-color: #f2f2f2;">
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Username</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
             <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Department</th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Position</th>
             <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;text-align: center">Create Salary</th>
         </tr>
     </thead>
     <tbody>
         {% for p in profiles %}
         <tr>
-            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.user.username }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.user.name }}</td>
             <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.department }}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.position }}</td>
             <td style="padding: 10px; border-bottom: 1px solid #ddd;">
                 <a href="{% url 'view_profile' profile_id=p.id %}" style="margin-right: 10px;">View</a>
                 <a href="{% url 'edit_employee' profile_id=p.id %}">Edit</a>
+            </td>
+            <td style="padding: 10px; border-bottom: 1px solid #ddd;text-align: center;">
+                <a href="{% url 'payroll_add' p.id %}" style="margin-right: 10px;">Salary</a>
             </td>
         </tr>
         {% endfor %}
