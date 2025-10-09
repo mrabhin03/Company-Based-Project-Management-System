@@ -61,3 +61,15 @@ class PayrollFilterForm(forms.Form):
     month = forms.ChoiceField(choices=MONTH_CHOICES)
     year = forms.ChoiceField(choices=YEAR_CHOICES)
 
+class DepFilterForm(forms.Form):
+    department = forms.ChoiceField(choices=[],widget=forms.Select(attrs={'onchange': 'this.form.submit();'})) 
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        departments = Department.objects.all()
+        DEPT_CHOICES = [(d.pk, d.name) for d in departments]
+
+        DEPT_CHOICES.insert(0, ('0', 'All Departments')) 
+        self.fields['department'].choices = DEPT_CHOICES
+

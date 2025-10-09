@@ -25,3 +25,13 @@ class TaskFormEdit(forms.ModelForm):
                 format='%Y-%m-%d'       
             )
         }
+
+class TaskStatus(forms.Form):
+    STATUS_CHOICES = [
+        ("0","All"),
+        ('PENDING', 'PENDING'),
+        ('IN_PROGRESS', 'IN_PROGRESS'),
+        ('COMPLETED', 'COMPLETED'),
+    ]
+
+    Status = forms.ChoiceField(choices=STATUS_CHOICES,widget=forms.Select(attrs={'onchange': 'this.form.submit();'}))

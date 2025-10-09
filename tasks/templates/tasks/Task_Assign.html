@@ -1,47 +1,49 @@
 {% extends 'base.html' %}
 
-{% block title %}All Tickets{% endblock %}
+{% block title %}Assign Task{% endblock %}
 
 {% block content %}
 
-<h2 style="margin-bottom:20px; color:#333;">Assign Ticket: {{ ticket.title }}</h2>
+<h2 style="margin-bottom:20px; color:#333;">Assign Task: {{ parent_task.title }}</h2>
 
-<!-- Already Assigned Tasks -->
+<!-- Already Assigned Subtasks -->
 <section style="margin-bottom:40px;">
-  <h3 style="color:#555;">Already Assigned Tasks</h3>
-  {% for task in ticket.tasks.all %}
+  <h3 style="color:#555;">Already Assigned Subtasks</h3>
+  {% for task in parent_task.subtasks.all %}
     <div style="border:1px solid #ccc; padding:15px; margin-bottom:10px; border-radius:6px; background:#fdfdfd; display:flex; justify-content:space-between; align-items:center;">
       <div>
-        <strong>Assigned To:</strong> {{ task.assigned_to.user.name }}<br>
+        <strong>Assigned To:</strong>
+        {% if task.assigned_to %}{{ task.assigned_to.user.name }}{% elif task.assigned_department %}{{ task.assigned_department.name }}{% else %}Multiple Employees{% endif %}<br>
         <strong>Status:</strong> {{ task.status }}<br>
         <strong>Title:</strong> {{ task.title }}<br>
         <strong>Description:</strong> {{ task.description }}<br>
         <strong>Deadline:</strong> {{ task.deadline }}
       </div>
       {% if task.status != 'COMPLETED' %}
-        <form method="post" action="{% url 'task_decline' task.id %}?NextPath=ticket_assign">
+        <form method="post" action="{% url 'task_decline' task.id %}?NextPath=task_assign_from_task">
           {% csrf_token %}
           <button type="submit" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">Decline</button>
         </form>
       {% endif %}
     </div>
   {% empty %}
-    <p>No tasks assigned yet.</p>
+    <p>No subtasks assigned yet.</p>
   {% endfor %}
 </section>
 
 <hr style="margin:40px 0;">
 
-<!-- Add New Assignment -->
+<!-- Add New Subtask -->
 <section>
-  <h3 style="color:#555;">Add New Assignment</h3>
-  <form method="post" action="{% url 'ticket_assign_save' ticket.id %}">
+  <h3 style="color:#555;">Add New Subtask</h3>
+  <form method="post" action="{% url 'Create_Task_Fom_TASK' parent_task.id %}">
     {% csrf_token %}
 
+    
     <!-- Assignment Type -->
-    <div style="margin-bottom:15px;">
+    <div style="margin-bottom:15px;{% if not departments.exists %}display:none;{% endif %}">
       <label style="font-weight:bold;">Assign To:</label>
-      <select name="assign_type" id="assign_type" style="padding:5px 10px; border-radius:4px; border:1px solid #ccc;box-sizing:border-box">
+      <select name="assign_type" id="assign_type" style="padding:5px 10px; border-radius:4px; border:1px solid #ccc; box-sizing:border-box">
         <option value="department">Department</option>
         <option value="employees">Employees</option>
       </select>
@@ -50,20 +52,20 @@
     <!-- Department Selector -->
     <div id="department_selector" style="margin-bottom:20px;">
       <label style="font-weight:bold;">Department:</label>
-      <select name="department_id" style="padding:5px 10px; border-radius:4px; border:1px solid #ccc;box-sizing:border-box">
+      <select name="department_id" style="padding:5px 10px; border-radius:4px; border:1px solid #ccc; box-sizing:border-box">
         {% for dept in departments %}
           <option value="{{ dept.id }}">{{ dept }}</option>
         {% endfor %}
       </select>
       <div style="margin-top:10px;">
         <label style="font-weight:bold;">Title:</label>
-        <input type="text" name="DescTask_Title" placeholder="Enter Title of the task"
+        <input type="text" name="DescTask_Title" placeholder="Enter Title of the subtask"
                style="padding:5px 10px; border-radius:4px; border:1px solid #ccc; box-sizing:border-box">
       </div>
       <div style="margin-top:10px;">
         <label style="font-weight:bold;">Description:</label>
         <input type="text" name="description_department" placeholder="Enter description"
-               style= "padding:5px 10px; border-radius:4px; border:1px solid #ccc; box-sizing:border-box">
+               style="padding:5px 10px; border-radius:4px; border:1px solid #ccc; box-sizing:border-box">
       </div>
       <div style="margin-top:10px;">
         <label style="font-weight:bold;">Deadline:</label>
@@ -94,7 +96,7 @@
       </table>
     </div>
 
-    <button type="submit" style="margin-top:20px; padding:8px 20px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer;">Save Assignment</button>
+    <button type="submit" style="margin-top:20px; padding:8px 20px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer;">Save Subtask</button>
   </form>
 </section>
 
@@ -105,15 +107,21 @@ const empDiv = document.getElementById('employees_selector');
 const empSearch = document.getElementById('employee_search');
 const empListTbody = document.getElementById('employee_list');
 
-assignType.addEventListener('change', () => {
+if(assignType){
+  assignType.addEventListener('change', () => {
+    changevalues()
+    
+  });
+}
+function changevalues(){
   if(assignType.value === 'department'){
-    deptDiv.style.display = 'block';
-    empDiv.style.display = 'none';
-  } else {
-    deptDiv.style.display = 'none';
-    empDiv.style.display = 'block';
-  }
-});
+      deptDiv.style.display = 'block';
+      empDiv.style.display = 'none';
+    } else {
+      deptDiv.style.display = 'none';
+      empDiv.style.display = 'block';
+    }
+}
 
 // Employee data
 const employees = [
@@ -143,7 +151,7 @@ function renderEmployeeList(filter=''){
         <input type="text" name="description_employee${emp.id}" placeholder="Description" style="width:100%; padding:3px 5px; border-radius:3px; border:1px solid #ccc;box-sizing:border-box">
       </td>
       <td style="padding:5px; border:1px solid #ddd;">
-        <input type="date" name="deadline${emp.id}" placeholder="Description" style="width:100%; padding:3px 5px; border-radius:3px; border:1px solid #ccc;box-sizing:border-box">
+        <input type="date" name="deadline${emp.id}" style="width:100%; padding:3px 5px; border-radius:3px; border:1px solid #ccc;box-sizing:border-box">
       </td>
     `;
     empListTbody.appendChild(tr);
@@ -161,5 +169,10 @@ renderEmployeeList();
 // Filter employees as user types
 empSearch.addEventListener('input', e => renderEmployeeList(e.target.value));
 </script>
-
+{% if not departments.exists %}
+<script>
+  assignType.value="employees"
+  changevalues()
+</script>
+{% endif %}
 {% endblock %}

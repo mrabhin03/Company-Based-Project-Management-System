@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from .forms import CustomUserForm, EmployeeProfileForm, CustomLoginForm,UserFormEdit
 from .models import EmployeeProfile, Payroll
-from .forms import PayrollForm,PayrollFilterForm
+from .forms import PayrollForm,PayrollFilterForm,DepFilterForm
+from company.models import Department
 from django.db.models import Max
 from datetime import date
 
@@ -67,11 +68,19 @@ def dashboard(request):
 
 @user_passes_test(lambda u: u.is_authenticated and u.role in [User.ROLE_ADMIN, User.ROLE_MANAGER])
 def employee_list(request):
+    depSelector=DepFilterForm()
     if request.user.role == 'MANAGER':
         profiles = EmployeeProfile.objects.filter(department=request.user.employeeprofile.department) 
     else:
-        profiles = EmployeeProfile.objects.select_related('user').all()
-    return render(request, 'users/employee_list.html', {'profiles': profiles})
+        if request.method == 'GET' and request.GET.get('department') and int(request.GET.get('department'))!=0:
+            DepFilter = request.GET.get('department')
+            department_queryset = Department.objects.filter(pk=DepFilter)
+            first_department = department_queryset.first()
+            profiles = EmployeeProfile.objects.filter(department=first_department).all()
+            depSelector = DepFilterForm(initial={'department': DepFilter})
+        else:
+            profiles = EmployeeProfile.objects.select_related('user').all()
+    return render(request, 'users/employee_list.html', {'profiles': profiles,'Dep':depSelector})
 
 
 # Register employee (admin + manager)

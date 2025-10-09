@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Customer,Ticket,TicketAssignment
+from .models import Customer,Ticket
 from django.contrib.auth.admin import UserAdmin
 
 CustomUser = get_user_model()
@@ -36,7 +36,3 @@ class CustomerAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone')
     search_fields = ('user__username', 'user__email', 'phone')
 
-@admin.register(TicketAssignment)
-class TicketAssignmentAdmin(admin.ModelAdmin):
-    list_display = ('ticket', 'assign_type', 'department', 'employee', 'status', 'assigned_by', 'created_at')
-    list_filter = ('assign_type', 'status', 'created_at')

@@ -1,18 +1,50 @@
-<h2>Manager Task List</h2>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Assigned To</th>
-        <th>Status</th>
-        <th>Deadline</th>
-    </tr>
-    {% for task in tasks %}
-    <tr>
-        <td>{{ task.title }}</td>
-        <td>{{ task.assigned_to.username }}</td>
-        <td>{{ task.status }}</td>
-        <td>{{ task.deadline }}</td>
-    </tr>
-    {% endfor %}
+{% extends 'base.html' %}
+
+{% block title %}All Tasks{% endblock %}
+
+{% block content %}
+<h2>All Tasks</h2>
+<form method="get" id="filterForm" style="margin-bottom: 15px;">
+    {{ status.as_p }}
+</form>
+<a href="{% url 'task_add' %}" style="display: inline-block; margin-bottom: 15px; padding: 6px 10px; text-decoration: none;">
+    Add New Task
+</a>
+
+{% if tasks %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Assigned To</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Deadline</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;text-align: center;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.title }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{% if task.assigned_department %}Dept: {{task.assigned_department.name}}{% else %}{{ task.assigned_to.user.name }}{% endif %}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.status }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.deadline|date:"Y-m-d" }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">
+                {% if task.assigned_department %} 
+                    <a href="{% url 'task_assign_from_task' task.id %}" style="text-decoration: none;">Assign</a> 
+                {% else %}
+                    <a href="{% url 'task_assign_from_task' task.id %}" style="text-decoration: none;">View</a> 
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-<a href="{% url 'task_create' %}">Create Task</a>
+{% else %}
+<p>No tasks available.</p>
+{% endif %}
+
+
+{% endblock %}

@@ -18,8 +18,23 @@ def department_create(request):
             form.save()
             return redirect('department_list')
     else:
-        form = DepartmentForm()
+        if request.method == 'GET' and request.GET.get("parent"):
+            form = DepartmentForm(initial={'parent': request.GET.get("parent")})
+        else:
+            form = DepartmentForm()
     return render(request, 'company/department_form.html', {'form': form})
+
+@user_passes_test(is_admin, login_url='/users/login/')
+def department_view(request, dept_id):
+    department = get_object_or_404(Department, id=dept_id)
+    sub_departments = Department.objects.filter(parent=department)
+    previous_url = request.META.get('HTTP_REFERER', '/')
+    return render(request, 'company/Department_detail.html', {
+        'department': department,
+        'sub_departments': sub_departments,
+        'previous_url': previous_url
+
+    })
 
 @user_passes_test(is_admin)
 def department_edit(request, pk):

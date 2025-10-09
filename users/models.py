@@ -34,7 +34,7 @@ class CustomUser(AbstractUser):
     )
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return f"{self.name} ({self.role})"
 
 
 class EmployeeProfile(models.Model):

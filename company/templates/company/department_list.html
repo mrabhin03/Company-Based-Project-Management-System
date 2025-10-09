@@ -16,7 +16,8 @@
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Manager</th>
+            <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;" colspan="2">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -25,7 +26,11 @@
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.name }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.description }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.manager.name }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'department_view' dept.id %}" style="text-decoration: none;text-align: center;">View</a>
+            </td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">
                 <a href="{% url 'department_edit' dept.id %}" style="text-decoration: none;">Edit</a>
             </td>
         </tr>

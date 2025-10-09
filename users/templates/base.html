@@ -205,7 +205,9 @@ p {
         <li><a href="{% url 'performance_overview' %}">Reports</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
     {% elif request.user.role == 'MANAGER' %}
-        <li><a href="{% url 'task_list_admin' %}">Tasks</a></li>
+        <li><a href="{% url 'task_list_employee' %}">My Tasks</a></li>
+        <li><a href="{% url 'task_list_manager' %}">Dept Tasks</a></li>
+        <li><a href="{% url 'emp_task_list_manager' %}">Employee Tasks</a></li>
         <li><a href="{% url 'employee_list' %}">Team</a></li>
         <li><a href="{% url 'performance_overview' %}">Reports</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>

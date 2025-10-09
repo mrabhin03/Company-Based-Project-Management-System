@@ -2,10 +2,29 @@ from django.db import models
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='sub_departments',
+        default='null'
+    )
+    manager = models.ForeignKey(
+        'users.CustomUser',
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        limit_choices_to={'role': 'MANAGER'},
+        related_name='managed_departments'
+    )
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        # Optional: show hierarchy name
+        if self.parent:
+            return f"{self.parent.name} → {self.name}"
         return self.name
 
 class Position(models.Model):

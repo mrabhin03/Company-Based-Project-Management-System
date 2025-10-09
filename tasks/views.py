@@ -1,22 +1,71 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from users.decorators import is_admin, is_manager, is_employee, is_admin_or_manager
+from users.decorators import admin_required, manager_required, is_employee, is_admin_or_manager
 from .models import Task
-from .forms import TaskForm,TaskFormEdit
+from .forms import TaskForm,TaskFormEdit,TaskStatus
 from users.models import EmployeeProfile
+from company.models import Department
+from django.db.models import Q
+
+def get_all_subdepartments(department):
+    """
+    Recursively get all sub-departments of a given department
+    """
+    subs = list(department.sub_departments.all())  # direct children
+    for sub in department.sub_departments.all():
+        subs.extend(get_all_subdepartments(sub))
+    return subs
+
 
 # ------------------- Admin / Manager -------------------
 
 @login_required
-@is_admin_or_manager
+@admin_required
 def task_list_admin(request):
-    """Admin sees all tasks, Manager sees only department tasks"""
-    if request.user.role == 'ADMIN':
+    TaskFilter=TaskStatus()
+    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="0":
+        tasks = Task.objects.filter(status=request.GET.get('Status'))
+        TaskFilter = TaskStatus(initial={'Status': request.GET.get('Status')})
+    else:
         tasks = Task.objects.all()
-    else:  # Manager
-        tasks = Task.objects.filter(assigned_to__department=request.user.employeeprofile.department)
-    return render(request, 'tasks/task_list_admin.html', {'tasks': tasks})
+    return render(request, 'tasks/task_list_admin.html', {'tasks': tasks,"status":TaskFilter})
+
+@login_required
+@manager_required
+def task_list_manager(request):
+    TaskFilter=TaskStatus()
+    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="0":
+        managed_departments = Department.objects.filter(manager=request.user)
+        tasks = Task.objects.filter(assigned_department__in=managed_departments,status=request.GET.get('Status'))
+        TaskFilter = TaskStatus(initial={'Status': request.GET.get('Status')})
+    else:
+        managed_departments = Department.objects.filter(manager=request.user)
+        tasks = Task.objects.filter(assigned_department__in=managed_departments)
+    return render(request, 'tasks/task_list_manager.html', {'tasks': tasks,"status":TaskFilter})
+
+@login_required
+@manager_required
+def emp_task_list_manager(request):
+    TaskFilter=TaskStatus()
+    managed_departments = Department.objects.filter(manager=request.user)
+    all_departments = []
+
+    for dept in managed_departments:
+        all_departments.append(dept)
+        all_departments.extend(get_all_subdepartments(dept))
+    all_departments = list(set(all_departments))
+
+    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="0":
+        managed_departments = Department.objects.filter(manager=request.user)
+        tasks = Task.objects.filter(Q(assigned_to__department__in=all_departments),status=request.GET.get('Status'))
+        TaskFilter = TaskStatus(initial={'Status': request.GET.get('Status')})
+    else:
+        tasks = Task.objects.filter(Q(assigned_to__department__in=all_departments)
+        )
+
+    return render(request, 'tasks/task_list_manager.html', {'tasks': tasks,"status":TaskFilter})
+
 
 @login_required
 @is_admin_or_manager
@@ -27,8 +76,8 @@ def task_create(request):
             task = form.save(commit=False)
             task.created_by = request.user
             # Restrict assignment for manager
-            if request.user.role == 'MANAGER' and task.assigned_to.department != request.user.employeeprofile.department:
-                return HttpResponse("Managers can assign tasks only to their department employees.")
+            # if request.user.role == 'MANAGER' and task.assigned_to.department != request.user.employeeprofile.department:
+            #     return HttpResponse("Managers can assign tasks only to their department employees.")
             task.save()
             return redirect('task_list_admin')
     else:
@@ -45,8 +94,8 @@ def task_create(request):
 def task_edit(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     # Manager can edit only tasks in their department
-    if request.user.role == 'MANAGER' and task.assigned_to.department != request.user.employeeprofile.department:
-        return HttpResponse("Managers cannot edit tasks outside their department.")
+    # if request.user.role == 'MANAGER' and (task.assigned_to and task.assigned_to.department != request.user.employeeprofile.department) or (task.assigned_department and task.assigned_department != request.user.employeeprofile.department):
+    #     return HttpResponse("Managers cannot edit tasks outside their department.")
     
     if request.method == 'POST':
         form = TaskFormEdit(request.POST, instance=task)
@@ -64,13 +113,11 @@ def task_edit(request, task_id):
 # ------------------- Employee -------------------
 
 @login_required
-@is_employee
 def task_list_employee(request):
     tasks = Task.objects.filter(assigned_to=request.user.employeeprofile)
     return render(request, 'tasks/task_list_employee.html', {'tasks': tasks})
 
 @login_required
-@is_employee
 def task_update_status(request, task_id):
     task = get_object_or_404(Task, id=task_id, assigned_to=request.user.employeeprofile)
     if request.method == 'POST':
@@ -101,4 +148,59 @@ def task_decline(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     ticket_id = task.ticket.id
     task.delete()
-    return redirect('ticket_assign', ticket_id=ticket_id)
+    return redirect(request.GET.get("NextPath"), ticket_id=ticket_id)
+
+@login_required
+@is_admin_or_manager
+def task_assign_from_task(request, task_id):
+    parent_task = get_object_or_404(Task, id=task_id)
+    sub_departments = Department.objects.filter(parent=parent_task.assigned_department)
+
+    
+    sub_departments = Department.objects.filter(parent=parent_task.assigned_department)
+
+    if sub_departments.exists():
+        employees = EmployeeProfile.objects.filter(department__in=sub_departments)
+    else:
+        employees = EmployeeProfile.objects.filter(department=parent_task.assigned_department)
+
+    return render(request, "tasks/Task_Assign.html", {
+        "parent_task": parent_task,
+        "departments": sub_departments,
+        "employees": employees,
+    })
+
+
+def Create_Task_Fom_TASK(request, task_id):
+    parent_task = get_object_or_404(Task, id=task_id)
+    if request.method == 'POST':
+        assign_type = request.POST.get('assign_type')
+        if assign_type == 'department':
+            description = request.POST.get('description_department')
+            dept_id = request.POST.get('department_id')
+            department = Department.objects.get(id=dept_id)
+            if department:
+                Task.objects.create(
+                    ticket=parent_task.ticket,
+                    assigned_department=department,
+                    parent_task=parent_task,
+                    description=description,
+                    created_by=request.user,
+                    title = parent_task.ticket.subject if request.POST.get('DescTask_Title') == "" else request.POST.get('DescTask_Title'),
+                    deadline=request.POST.get('deadline_department')
+                )
+        elif assign_type == 'employees':
+            emp_ids = request.POST.getlist('employee_ids')
+            for eid in emp_ids:
+                emp = EmployeeProfile.objects.get(id=eid)
+                desc=(request.POST.get('description_employee'+eid))
+                Task.objects.create(
+                    ticket=parent_task.ticket,
+                    assigned_to=emp,
+                    parent_task=parent_task,
+                    description=desc,
+                    created_by=request.user,
+                    title = parent_task.ticket.subject if request.POST.get('Task_Title'+eid) == "" else request.POST.get('Task_Title'+eid),
+                    deadline=request.POST.get('deadline'+eid)
+                )
+    return redirect("task_assign_from_task",task_id)

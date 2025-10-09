@@ -3,7 +3,10 @@ from .models import Department, Position, Benefit
 class DepartmentForm(forms.ModelForm):
     class Meta:
         model = Department
-        fields = ['name', 'description']
+        fields = ['name','manager', 'parent', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
 
 class PositionForm(forms.ModelForm):
     class Meta:

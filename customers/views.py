@@ -121,12 +121,10 @@ def ticket_assign_save(request, ticket_id):
             description = request.POST.get('description_department')
             dept_id = request.POST.get('department_id')
             department = Department.objects.get(id=dept_id)
-            # Create a task for manager of department (first step)
-            manager = CustomUser.objects.filter(role='MANAGER', employeeprofile__department=department).first()
-            if manager:
+            if department:
                 Task.objects.create(
                     ticket=ticket,
-                    assigned_to=manager.employeeprofile,
+                    assigned_department=department,
                     description=description,
                     created_by=request.user,
                     title = ticket.subject if request.POST.get('DescTask_Title') == "" else request.POST.get('DescTask_Title'),
