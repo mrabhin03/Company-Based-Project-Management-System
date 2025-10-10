@@ -25,10 +25,12 @@
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.status }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">
                 <a href="{% url 'ticket_detail' ticket.id %}">View</a>
+                <a href="{% url 'ticket_response' ticket.id %}">DD</a>
                 {% if ticket.status != 'COMPLETED' %}
                 | <a href="{% url 'ticket_assign' ticket.id %}">Assign</a>
                 {% endif %}
             </td>
+
         </tr>
         {% endfor %}
     </tbody>

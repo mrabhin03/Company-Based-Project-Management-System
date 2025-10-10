@@ -25,6 +25,8 @@
         <td>{{ ticket.status }}</td>
         <td>
             <a href="{% url 'ticket_edit' ticket.id %}">Edit</a>
+            <a href="{% url 'customer_reply' ticket.id %}">Details</a>
+            <a href="{% url 'ticket_feedback' ticket.id %}">Feed</a>
         </td>
     </tr>
     {% empty %}

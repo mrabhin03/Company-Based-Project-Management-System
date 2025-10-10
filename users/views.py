@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from .forms import CustomUserForm, EmployeeProfileForm, CustomLoginForm,UserFormEdit
 from .models import EmployeeProfile, Payroll
-from .forms import PayrollForm,PayrollFilterForm,DepFilterForm
+from .forms import PayrollForm,PayrollFilterForm,DepFilterForm,ChangePassword,EmpSelfEdit1,EmpSelfEdit2
 from company.models import Department
 from django.db.models import Max
 from datetime import date
@@ -106,21 +106,36 @@ def employee_register(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
-@user_passes_test(lambda u: u.is_authenticated and u.role in [User.ROLE_ADMIN, User.ROLE_MANAGER], login_url='login')
+@login_required
 def edit_employee(request, profile_id):
     profile = get_object_or_404(EmployeeProfile, id=profile_id)
     if request.method == 'POST':
-        user_form = UserFormEdit(request.POST, instance=profile.user)
-        profile_form = EmployeeProfileForm(request.POST, instance=profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save(commit=False)
-            user.save()
-            profile_form.save()
+        if request.user.role!="EMPLOYEE":
+            user_form = UserFormEdit(request.POST, instance=profile.user)
+            profile_form = EmployeeProfileForm(request.POST, instance=profile)
+            if user_form.is_valid() and profile_form.is_valid():
+                user = user_form.save(commit=False)
+                user.save()
+                profile_form.save()
             return redirect('employee_list')
+        else:
+            EmpSelfEditF1 = EmpSelfEdit1(request.POST, instance=profile.user)
+            EmpSelfEditF2 = EmpSelfEdit2(request.POST, instance=profile)
+            if EmpSelfEditF1.is_valid() and EmpSelfEditF2.is_valid():
+                user = EmpSelfEditF1.save(commit=False)
+                user.save()
+                EmpSelfEditF2.save()
+                
+            return redirect('view_profile',profile_id=profile.id)
     else:
-        user_form = UserFormEdit(instance=profile.user)
-        profile_form = EmployeeProfileForm(instance=profile)
-    return render(request, 'users/edit_employee.html', {'user_form': user_form, 'profile_form': profile_form, 'profile': profile})
+        if request.user.role!="EMPLOYEE":
+            user_form = UserFormEdit(instance=profile.user)
+            profile_form = EmployeeProfileForm(instance=profile)
+            return render(request, 'users/edit_employee.html', {'user_form': user_form, 'profile_form': profile_form, 'profile': profile})
+        else:
+            EmpSelfEditF1 = EmpSelfEdit1(instance=profile.user)
+            EmpSelfEditF2 = EmpSelfEdit2(instance=profile)
+            return render(request, 'users/edit_employee.html', { 'profile': profile,'EmpSelfEditF1':EmpSelfEditF1,'EmpSelfEditF2':EmpSelfEditF2})
 
 @login_required
 def view_profile(request, profile_id):
@@ -196,3 +211,13 @@ def payroll_list_all(request):
     }
     return render(request, 'users/payroll_list_all.html', context)
 
+def Change_Password(request, profile_id):
+    profile = get_object_or_404(EmployeeProfile, id=profile_id)
+    if request.method == 'POST':
+        user_form = ChangePassword(request.POST, instance=profile.user)
+        if user_form.is_valid():
+            user = user_form.save(commit=False)
+            user.save()
+            return redirect('view_profile',profile_id=profile.id)
+    Change = ChangePassword(instance=profile.user)
+    return render(request, 'users/ChangePassword.html', { 'profile': profile,'Change':Change})

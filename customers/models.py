@@ -31,3 +31,16 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.subject} ({self.status})"
+    
+class TicketResponse(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='responses')
+    responder = models.ForeignKey("users.CustomUser", on_delete=models.SET_NULL, null=True, blank=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_customer_reply = models.BooleanField(default=False)
+    
+class TicketFeedback(models.Model):
+    ticket = models.OneToOneField(Ticket, on_delete=models.CASCADE, related_name='feedback')
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

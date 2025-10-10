@@ -9,21 +9,43 @@ class CustomUserForm(UserCreationForm):
         model = CustomUser
         fields = ['name','username', 'email', 'role', 'phone', 'password1', 'password2']
 
+class ChangePassword(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = [ 'password1', 'password2']
+
 class UserFormEdit(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['name','username', 'email', 'role', 'phone']
 
+
+class EmpSelfEdit1(forms.ModelForm):
+     class Meta:
+        model = CustomUser
+        fields = ['name','email', 'phone']
+        
+class EmpSelfEdit2(forms.ModelForm):
+     class Meta:
+        model = EmployeeProfile
+        fields = ['skills']
+        widgets = {
+            'skills': forms.Textarea(attrs={'rows': 5, 'placeholder': 'List your skills, certifications, or trainings'}),
+        }
+
+
 class EmployeeProfileForm(forms.ModelForm):
     class Meta:
         model = EmployeeProfile
-        fields = ['department', 'position', 'benefits', 'date_of_joining', 'salary']
+        fields = ['skills','department', 'position', 'benefits', 'date_of_joining', 'salary']
         widgets = {
             'benefits': forms.CheckboxSelectMultiple(),
+            'skills': forms.Textarea(attrs={'rows': 5, 'placeholder': 'List your skills, certifications, or trainings'}),
             'date_of_joining': forms.DateInput(
                 attrs={'type': 'date'}
             ),
         }
+
 
 
     def __init__(self, *args, **kwargs):
@@ -72,4 +94,3 @@ class DepFilterForm(forms.Form):
 
         DEPT_CHOICES.insert(0, ('0', 'All Departments')) 
         self.fields['department'].choices = DEPT_CHOICES
-

@@ -8,6 +8,8 @@ urlpatterns = [
     path('login/', views.customer_login, name='customer_login'),
     path('logout/', views.customer_logout, name='customer_logout'),
     path('dashboard/', views.customer_dashboard, name='customer_dashboard'),
+
+
     path('ticket/create/', views.ticket_create, name='ticket_create'),
     path('ticket/view/', views.ticket_list_admin, name='ticket_list_admin'),
     path('ticket/StatusUpdate/<int:ticket_id>', views.ticket_update_status, name='ticket_update_status'),
@@ -15,5 +17,9 @@ urlpatterns = [
     path('tickets/<int:ticket_id>/', views.ticket_detail, name='ticket_detail'),
     path('tickets/<int:ticket_id>/assign/', views.ticket_assign, name='ticket_assign'),
     path('tickets/<int:ticket_id>/assign/save/', views.ticket_assign_save, name='ticket_assign_save'),
+    path('ticket/<int:ticket_id>/responses/', views.ticket_response, name='ticket_response'),
+    path('ticket/<int:ticket_id>/customer_reply/', views.customer_reply, name='customer_reply'),
+    path('ticket/<int:ticket_id>/feedback/', views.ticket_feedback, name='ticket_feedback'),
+    path('feedbacks/', views.feedback_list, name='feedback_list'),
     
 ]

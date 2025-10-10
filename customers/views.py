@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from .forms import CustomerRegistrationForm, CustomerLoginForm, TicketForm
-from .models import Ticket, Customer
+from .models import Ticket, Customer,TicketFeedback,TicketResponse
 from users.decorators import is_admin, is_manager,admin_required,is_admin_or_manager
 from .forms import TicketStatusForm
 from tasks.models import Task
@@ -10,6 +10,7 @@ from users.models import EmployeeProfile
 from company.models import Department
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 CustomUser = get_user_model()
 
 def is_customer(user):
@@ -145,3 +146,75 @@ def ticket_assign_save(request, ticket_id):
                 )
         return redirect('ticket_assign', ticket_id=ticket.id)
     
+@login_required
+def ticket_response(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    responses = ticket.responses.all().order_by('created_at')
+
+    if request.method == "POST":
+        message = request.POST.get("message")
+        TicketResponse.objects.create(
+            ticket=ticket,
+            responder=request.user,
+            message=message,
+            is_customer_reply=False
+        )
+        messages.success(request, "Response sent successfully.")
+        return redirect('ticket_response', ticket_id=ticket_id)
+
+    return render(request, 'customer/ticket_response.html', {'ticket': ticket, 'responses': responses})
+
+
+@login_required
+def customer_reply(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    responses = ticket.responses.all().order_by('created_at')
+
+    if request.method == "POST":
+        message = request.POST.get("message")
+        TicketResponse.objects.create(
+            ticket=ticket,
+            responder=request.user,
+            message=message,
+            is_customer_reply=True
+        )
+        messages.success(request, "Your reply was sent successfully.")
+        return redirect('customer_reply', ticket_id=ticket_id)
+
+    return render(request, 'customer/customer_reply.html', {'ticket': ticket, 'responses': responses})
+    
+@login_required
+def ticket_feedback(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        TicketFeedback.objects.create(
+            ticket=ticket,
+            rating=rating,
+            comment=comment
+        )
+        messages.success(request, 'Thank you for your feedback!')
+        return redirect('customer_dashboard')
+
+    return render(request, 'customer/feedback.html', {'ticket': ticket})
+
+@login_required
+def feedback_list(request):
+    if request.user.role == 'ADMIN':
+        feedbacks = TicketFeedback.objects.select_related('ticket').all().order_by('-created_at')
+    elif request.user.role == 'MANAGER':
+        # Manager sees only feedback for tickets under their department
+        feedbacks = TicketFeedback.objects.filter(
+            ticket__department=request.user.employeeprofile.department
+        ).select_related('ticket').order_by('-created_at')
+    elif request.user.role == 'CUSTOMER':
+        # Customer sees only their own feedbacks
+        feedbacks = TicketFeedback.objects.filter(
+            ticket__customer=request.user.customer
+        ).select_related('ticket').order_by('-created_at')
+    else:
+        feedbacks = TicketFeedback.objects.none()
+
+    return render(request, 'customer/feedback_list.html', {'feedbacks': feedbacks})

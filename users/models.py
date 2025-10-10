@@ -44,6 +44,7 @@ class EmployeeProfile(models.Model):
     benefits = models.ManyToManyField(Benefit, blank=True)
     date_of_joining = models.DateField()
     salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    skills = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.position.title if self.position else 'No Position'}"
