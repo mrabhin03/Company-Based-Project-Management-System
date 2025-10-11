@@ -6,9 +6,11 @@
     ← Back
 </a>
 <h2>Create Task</h2>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Task</button>
+    <label for="id_file">Attach files:</label>
+    <input type="file" name="file" id="id_file" multiple>
+    <button type="submit">Submit Task</button>
 </form>
 {% endblock %}

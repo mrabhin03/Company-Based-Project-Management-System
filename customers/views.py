@@ -2,9 +2,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from .forms import CustomerRegistrationForm, CustomerLoginForm, TicketForm
-from .models import Ticket, Customer,TicketFeedback,TicketResponse
+from .models import Ticket, Customer,TicketFeedback,TicketResponse,TicketAttachment
 from users.decorators import is_admin, is_manager,admin_required,is_admin_or_manager
-from .forms import TicketStatusForm
+from .forms import TicketStatusForm,TicketAttachmentForm
 from tasks.models import Task
 from users.models import EmployeeProfile
 from company.models import Department
@@ -60,6 +60,13 @@ def ticket_create(request):
             ticket = form.save(commit=False)
             ticket.customer = request.user.customer
             ticket.save()
+            # Save each uploaded file
+            for f in request.FILES.getlist('file'):
+                TicketAttachment.objects.create(
+                    ticket=ticket,
+                    file=f,
+                    uploaded_by=request.user
+                )
             return redirect('customer_dashboard')
     else:
         form = TicketForm()
@@ -72,14 +79,34 @@ def ticket_edit(request, ticket_id):
         form = TicketForm(request.POST, instance=ticket)
         if form.is_valid():
             form.save()
+            # Save new files (add, don't replace)
+            for f in request.FILES.getlist('file'):
+                TicketAttachment.objects.create(
+                    ticket=ticket,
+                    file=f,
+                    uploaded_by=request.user
+                )
             return redirect('customer_dashboard')
     else:
         form = TicketForm(instance=ticket)
-    return render(request, 'customer/ticket_form.html', {'form': form})
+    attachments = ticket.attachments.all()
+    return render(request, 'customer/ticket_form.html', {'form': form, 'ticket': ticket,'attachment':attachments})
+
+@login_required
+def delete_ticket_attachment(request, attachment_id):
+    attachment = get_object_or_404(TicketAttachment, id=attachment_id)
+    ticket = attachment.ticket
+    # Only the ticket owner (customer) or admins/managers can delete
+    if request.user == ticket.customer.user or request.user.role in ['ADMIN', 'MANAGER']:
+        attachment.file.delete(save=False)  # Delete file from storage
+        attachment.delete()  # Delete DB record
+    return redirect('ticket_edit', ticket_id=ticket.id)
+
 
 def ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    return render(request, 'customer/ticket_detail.html', {'ticket': ticket})
+    attachments = ticket.attachments.all()
+    return render(request, 'customer/ticket_detail.html', {'ticket': ticket, 'attachments': attachments})
 
 
 def ticket_list_admin(request):

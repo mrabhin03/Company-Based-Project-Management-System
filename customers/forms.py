@@ -31,3 +31,11 @@ class TicketStatusForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['status']
+
+
+from .models import TicketAttachment
+
+class TicketAttachmentForm(forms.ModelForm):
+    class Meta:
+        model = TicketAttachment
+        fields = ['file']

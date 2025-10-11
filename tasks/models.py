@@ -98,3 +98,18 @@ class Task(models.Model):
                     parent.save(update_fields=['status'])
             parent = parent.parent_task
         self.update_parent_ticket_status()
+
+
+from django.conf import settings
+from django.db import models
+
+class TaskAttachment(models.Model):
+    task = models.ForeignKey('Task', on_delete=models.CASCADE, related_name="attachments")
+    file = models.FileField(upload_to="task/attachments/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.file.name

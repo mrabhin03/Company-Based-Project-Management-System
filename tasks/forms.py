@@ -26,12 +26,15 @@ class TaskFormEdit(forms.ModelForm):
             )
         }
 
-class TaskStatus(forms.Form):
-    STATUS_CHOICES = [
-        ("0","All"),
-        ('PENDING', 'PENDING'),
-        ('IN_PROGRESS', 'IN_PROGRESS'),
-        ('COMPLETED', 'COMPLETED'),
-    ]
+class TaskStatus(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['status']
 
-    Status = forms.ChoiceField(choices=STATUS_CHOICES,widget=forms.Select(attrs={'onchange': 'this.form.submit();'}))
+from .models import TaskAttachment
+from django import forms
+
+class TaskAttachmentForm(forms.ModelForm):
+    class Meta:
+        model = TaskAttachment
+        fields = ['file']

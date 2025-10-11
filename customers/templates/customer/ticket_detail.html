@@ -8,6 +8,14 @@
             text-decoration: none; border-radius: 6px; font-size: 14px;">
     ← Back
 </a>
+<style>
+    th{
+        max-width:fit-content !important;
+    }
+    td{
+        width: 100%;
+    }
+</style>
 <h2>Ticket Details</h2>
 
 <table>
@@ -32,6 +40,14 @@
         <td>{{ ticket.created_at }}</td>
     </tr>
 </table>
-
+<h3>Attachments:</h3>
+<ul>
+    {% for file in attachments %}
+    
+        <li><a href="{{ file.file.url }}">{{ file.file.name }}</a> (uploaded at {{ file.uploaded_at }})</li>
+    {% empty %}
+        <li>No attachments.</li>
+    {% endfor %}
+</ul>
 <br>
 {% endblock %}
