@@ -47,7 +47,7 @@ class EmployeeProfile(models.Model):
     skills = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.position.title if self.position else 'No Position'}"
+        return f"{self.user.name} - {self.position.title if self.position else 'No Position'}"
     
 class Payroll(models.Model):
     employee = models.ForeignKey('EmployeeProfile', on_delete=models.CASCADE, related_name='payrolls')

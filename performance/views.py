@@ -13,5 +13,22 @@ def performance_overview(request):
     else:
         employees = EmployeeProfile.objects.all()
     
-    reports = PerformanceReport.objects.filter(employee__in=employees)
+    reports_qs = PerformanceReport.objects.filter(employee__in=employees)
+
+    # Convert to list of dicts for JSON
+    reports = []
+    for r in reports_qs:
+        reports.append({
+            'employee': {
+                'id': r.employee.id,
+                'username': r.employee.user.username,
+                'name': getattr(r.employee.user, 'name', r.employee.user.username),
+            },
+            'total_tasks': r.total_tasks,
+            'completed_tasks': r.completed_tasks,
+            'pending_tasks': r.pending_tasks,
+            'overdue_tasks': r.overdue_tasks,
+            'performance_score': float(r.performance_score or 0),
+        })
+
     return render(request, 'performance/performance_overview.html', {'reports': reports})

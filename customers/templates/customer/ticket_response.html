@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
 <h2>Respond to Ticket: {{ ticket.subject }}</h2>
 <style>
     .chat-box {
@@ -7,7 +12,8 @@
     background: #fafafa;
     border-radius: 10px;
     padding: 15px;
-    max-height: 400px;
+    max-height: 300px;
+    height: 100%;
     overflow-y: auto;
     margin-bottom: 20px;
 }

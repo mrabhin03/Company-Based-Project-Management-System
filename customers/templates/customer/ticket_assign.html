@@ -3,7 +3,11 @@
 {% block title %}All Tickets{% endblock %}
 
 {% block content %}
-
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
 <h2 style="margin-bottom:20px; color:#333;">Assign Ticket: {{ ticket.title }}</h2>
 
 <!-- Already Assigned Tasks -->

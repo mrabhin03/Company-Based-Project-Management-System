@@ -22,8 +22,7 @@
             <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
             <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Department</th>
             <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Position</th>
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;text-align: center">Create Salary</th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;text-align: center;" colspan="3">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -33,11 +32,13 @@
             <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.user.name }}</td>
             <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.department }}</td>
             <td style="padding: 10px; border-bottom: 1px solid #ddd;">{{ p.position.title }}</td>
-            <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            <td style="padding: 0px; border-bottom: 1px solid #ddd;">
                 <a href="{% url 'view_profile' profile_id=p.id %}" style="margin-right: 10px;">View</a>
+            </td>
+            <td style="padding: 0px; border-bottom: 1px solid #ddd;text-align: center;">
                 <a href="{% url 'edit_employee' profile_id=p.id %}">Edit</a>
             </td>
-            <td style="padding: 10px; border-bottom: 1px solid #ddd;text-align: center;">
+            <td style="padding: 0px; border-bottom: 1px solid #ddd;text-align: center;">
                 <a href="{% url 'payroll_add' p.id %}" style="margin-right: 10px;">Salary</a>
             </td>
         </tr>

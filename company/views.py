@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Department, Position, Benefit
 from .forms import DepartmentForm, PositionForm, BenefitForm
+from users.models import EmployeeProfile
 
 def is_admin(user):
     return user.is_authenticated and user.role == 'ADMIN'
@@ -24,15 +25,24 @@ def department_create(request):
             form = DepartmentForm()
     return render(request, 'company/department_form.html', {'form': form})
 
+def get_all_sub_departments(department):
+    sub_departments = Department.objects.filter(parent=department)
+    all_subs = list(sub_departments)
+    for sub in sub_departments:
+        all_subs.extend(get_all_sub_departments(sub))
+    return all_subs
+
 @user_passes_test(is_admin, login_url='/users/login/')
 def department_view(request, dept_id):
     department = get_object_or_404(Department, id=dept_id)
     sub_departments = Department.objects.filter(parent=department)
-    previous_url = request.META.get('HTTP_REFERER', '/')
+    all_departments = [department] + get_all_sub_departments(department)
+    employees = EmployeeProfile.objects.filter(department__in=all_departments)
+    print(employees)
     return render(request, 'company/Department_detail.html', {
         'department': department,
         'sub_departments': sub_departments,
-        'previous_url': previous_url
+        'employees':employees
 
     })
 

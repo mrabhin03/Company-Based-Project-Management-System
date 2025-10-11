@@ -20,6 +20,12 @@
     <h2 style="margin-bottom: 5px;">{{ department.name }}</h2>
     <p><strong>Description:</strong> {{ department.description }}</p>
     <p><strong>Created at:</strong> {{ department.created_at|date:"M d, Y H:i" }}</p>
+    <a style="background-color: #7f0505; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;"
+                  href="{% url 'department_edit' department.id %}" style="text-decoration: none;">Edit</a>
+    <a style="background-color: #094773; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;"
+                  href="{% url 'department_performance_detail' department.id %}" style="text-decoration: none;">View Performance</a>
 
     <hr>
 
@@ -33,7 +39,7 @@
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Manager</th>
-            <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;" colspan="2">Actions</th>
+            <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -47,10 +53,6 @@
                     <a href="{% url 'department_view' sub.id %}" 
                        style="text-decoration: none; color: #007bff; margin-right: 10px;">View</a>
                 </td>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">
-                    <a href="{% url 'department_edit' sub.id %}" 
-                       style="text-decoration: none; color: #28a745;">Edit</a>
-                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -58,5 +60,34 @@
     {% else %}
     <p style="color: #666;">No sub-departments under this department.</p>
     {% endif %}
+    <hr>
+    <h3 style="margin-top: 25px;">Employees</h3>
+    {% if employees %}
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Position</th>
+            <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ emp.user.name }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ emp.position }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">
+                    <a href="{% url 'view_profile' profile_id=emp.id %}">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No Employees under this department.</p>
+    {% endif %}
+
 </div>
 {% endblock %}

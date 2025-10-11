@@ -3,6 +3,11 @@
 {% block title %}{{ profile.user.username }}{% endblock %}
 
 {% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
 <h2>{{ profile.user.name }} ({{ profile.user.role }})</h2>
 
 <div style="margin-bottom: 15px;">
