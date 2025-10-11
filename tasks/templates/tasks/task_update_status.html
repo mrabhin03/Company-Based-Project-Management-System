@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Update Task Status</h2>
+<p>Task: {{ task.title }}</p>
+<p>Description: {{ task.description }}</p>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label for="id_file">Upload deliverable(s):</label>
+    <input type="file" name="file" id="id_file" multiple>
+    <button type="submit">Update Status</button>
+</form>
+{% endblock %}

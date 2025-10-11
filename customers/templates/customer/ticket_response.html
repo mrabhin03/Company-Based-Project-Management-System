@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{% url 'ticket_detail' ticket.id %}" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Respond to Ticket: {{ ticket.subject }}</h2>
+<style>
+    .chat-box {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 300px;
+    height: 100%;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.chat-msg {
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    width: fit-content;
+    max-width: 70%;
+}
+
+.chat-msg.customer {
+    background: #d1f7d6;
+    margin-left: auto;
+    text-align: right;
+}
+
+.chat-msg.staff {
+    background: #f1f1f1;
+}
+
+.reply-form textarea {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.reply-form button,
+.feedback-form button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.reply-form button:hover,
+.feedback-form button:hover {
+    background: #0056b3;
+}
+textarea{
+    resize: none;
+}
+</style>
+
+<div class="chat-box" id="chat-box">
+    {% for r in responses %}
+    <div class="chat-msg {% if r.is_customer_reply %}customer{% else %}staff{% endif %}">
+        <p>{{ r.message }}</p>
+        <small>{{ r.created_at|date:"d M Y H:i" }}</small>
+    </div>
+    {% endfor %}
+</div>
+
+<form method="POST" class="reply-form">
+    {% csrf_token %}
+    <textarea name="message" placeholder="Type your reply..." required></textarea>
+    <button type="submit">Send</button>
+</form>
+<script>
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+{% endblock %}

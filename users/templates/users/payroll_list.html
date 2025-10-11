@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Payroll - {{ employee.user.username }}{% endblock %}
+
+{% block content %}
+<h2>Payroll for {{ employee.user.username }}</h2>
+
+<!-- <a href="{% url 'payroll_add' employee.id %}" style="display: inline-block; margin-bottom: 15px; padding: 6px 10px; text-decoration: none;">
+    Add Payroll
+</a> -->
+
+{% if payrolls %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Month</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Base Salary</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Bonuses</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Deductions</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Net Salary</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in payrolls %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ p.month|date:"F Y" }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ p.base_salary }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ p.bonuses }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ p.deductions }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ p.net_salary }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ p.is_paid|yesno:"Paid,Pending" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No payroll records.</p>
+{% endif %}
+
+{% endblock %}

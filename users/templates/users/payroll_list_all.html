@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Payrolls{% endblock %}
+
+{% block content %}
+<h2>Payrolls</h2>
+
+<form method="get" style="margin-bottom: 15px;">
+    {{ form.as_p }}
+    <button type="submit">Filter</button>
+</form>
+{% if payrolls %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Employee</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Base Salary</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Bonuses</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Deductions</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Salary</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Paid</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for payroll in payrolls %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ payroll.employee.user.name }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ payroll.base_salary }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ payroll.bonuses }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ payroll.deductions }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ payroll.net_salary }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ payroll.is_paid|yesno:"Paid,Pending" }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'payroll_edit' payroll.id %}" style="text-decoration: none;">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No payroll found for selected month/year.</p>
+{% endif %}
+{% endblock %}

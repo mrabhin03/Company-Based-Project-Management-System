@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Create Task</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label for="id_file">Attach files:</label>
+    <input type="file" name="file" id="id_file" multiple>
+    <button type="submit">Submit Task</button>
+</form>
+{% endblock %}

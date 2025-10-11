@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Performance Overview{% endblock %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Performance Overview</h2>
+
+{% if reports %}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;">
+
+    <div >
+        <canvas id="tasksChart"></canvas>
+    </div>
+
+    <div >
+        <canvas id="pendingChart"></canvas>
+    </div>
+
+    <div>
+        <canvas id="scoreChart"></canvas>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const employees = {{ reports|safe }};
+
+    const labels = employees.map(r => r.employee.name);
+    const totalTasks = employees.map(r => r.total_tasks);
+    const completedTasks = employees.map(r => r.completed_tasks);
+    const pendingTasks = employees.map(r => r.pending_tasks);
+    const overdueTasks = employees.map(r => r.overdue_tasks);
+    const performanceScore = employees.map(r => parseFloat(r.performance_score.toFixed(2)));
+
+    // Tasks Chart: Total vs Completed
+    new Chart(document.getElementById('tasksChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Total Tasks', data: totalTasks, backgroundColor: '#4caf50' },
+                { label: 'Completed Tasks', data: completedTasks, backgroundColor: '#2196f3' }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'top' }, title: { display: true, text: 'Tasks Overview per Employee' } },
+            scales: { y: { beginAtZero: true, precision:0 } }
+        }
+    });
+
+    // Pending vs Overdue Chart
+    new Chart(document.getElementById('pendingChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Pending Tasks', data: pendingTasks, backgroundColor: '#ff9800' },
+                { label: 'Overdue Tasks', data: overdueTasks, backgroundColor: '#f44336' }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'top' }, title: { display: true, text: 'Pending & Overdue Tasks' } },
+            scales: { y: { beginAtZero: true, precision:0 } }
+        }
+    });
+
+    // Performance Score Chart
+    new Chart(document.getElementById('scoreChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Performance Score (%)',
+                data: performanceScore,
+                borderColor: '#673ab7',
+                backgroundColor: 'rgba(103, 58, 183, 0.2)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true }, title: { display: true, text: 'Employee Performance Score' } },
+            scales: { y: { beginAtZero: true, max: 100 } }
+        }
+    });
+</script>
+
+{% else %}
+<p>No performance data yet.</p>
+{% endif %}
+
+{% endblock %}

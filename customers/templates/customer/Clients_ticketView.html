@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Ticket Details{% endblock %}
+
+{% block content %}
+
+<style>
+    th{
+        max-width:fit-content !important;
+    }
+    td{
+        width: 100%;
+    }
+    a{
+        position: relative;
+    }
+    .notify{
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+    }
+</style>
+<h2>Ticket Details</h2>
+
+<table>
+    <tr>
+        <th>Project</th>
+        <td>{{ ticket.subject }}</td>
+    </tr>
+    <tr>
+        <th>Customer</th>
+        <td>{{ ticket.customer.user.name }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ ticket.status }}</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>{{ ticket.description }}</td>
+    </tr>
+    <tr>
+        <th>Created At</th>
+        <td>{{ ticket.created_at }}</td>
+    </tr>
+</table>
+
+{% if ticket.status != 'RESOLVED' %}
+<a style="background-color: #2878a7; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_edit' ticket.id %}">Edit</a>
+{% else %}
+<a style="background-color: #28a78e; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_feedback' ticket.id %}">Send Feedback</a>
+{% endif %}
+<a style="background-color: #2861a7; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'customer_reply' ticket.id %}">Message {% if ticket.notification != 0 %} <span class="notify">{{ticket.notification}}</span>{% endif %}</a>
+<h3>Attachments:</h3>
+<ul>
+    {% for file in attachments %}
+    
+        <li><a href="{{ file.file.url }}">{{ file.file.name }}</a> (uploaded at {{ file.uploaded_at }})</li>
+    {% empty %}
+        <li>No attachments.</li>
+    {% endfor %}
+</ul>
+<br>
+{% endblock %}

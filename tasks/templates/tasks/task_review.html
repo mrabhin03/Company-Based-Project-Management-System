@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Review Task: {{ task.title }}</h2>
+<h3>Employee Attachments:</h3>
+<ul>
+    {% for attachment in attachments %}
+        <li>
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+            (uploaded by {{ attachment.uploaded_by }} at {{ attachment.uploaded_at }})
+        </li>
+    {% empty %}
+        <li>No attachments.</li>
+    {% endfor %}
+</ul>
+
+
+
+<h3>Status Update:</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ status_form.as_p }}
+    <button type="submit">Update Status</button>
+</form>
+
+<h3>Comments:</h3>
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.author }}:</strong> {{ comment.text }} <br>
+            {% if comment.attachment %}
+                <a href="{{ comment.attachment.url }}">Download feedback file</a>
+            {% endif %}
+            <em>Posted at {{ comment.created_at }}</em>
+        </li>
+    {% empty %}
+        <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+<h3>Leave Feedback or Upload Feedback File:</h3>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Post Comment</button>
+</form>
+{% endblock %}

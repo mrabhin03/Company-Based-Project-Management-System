@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+</head>
+<style>
+    /* === Base Layout === */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    color: #333;
+    transition: background-color 0.3s;
+}
+
+main {
+    flex: 1;
+    padding: 25px;
+}
+
+/* === Headings === */
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+h3 {
+    font-size: 1.3rem;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 5px;
+}
+
+/* === Links === */
+a {
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #1e40af;
+}
+
+/* === Tables === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+th, td {
+    text-align: left;
+    padding: 12px 15px;
+}
+
+th {
+    background-color: #3b82f6;
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+tbody tr {
+    transition: background-color 0.3s;
+}
+
+tbody tr:hover {
+    background-color: #e0f2fe;
+}
+
+/* === Forms === */
+form p {
+    margin-bottom: 15px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #374151;
+}
+form > ul{
+    font-size: 10px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="month"],input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    outline: none;
+}
+
+textarea {
+    min-height: 90px;
+}
+
+/* === Checkboxes === */
+input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* === Fieldsets === */
+fieldset {
+    border: 1px solid #d1d5db;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+legend {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* === Buttons === */
+button, input[type="submit"], .btn {
+    padding: 10px 18px;
+    border: none;
+    background-color: #3b82f6;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover, input[type="submit"]:hover, .btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+button:active, input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* === Helptext === */
+.helptext {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* === Sidebar Links === */
+aside ul li a {
+    display: block;
+    padding: 8px 0;
+    color: #374151;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background-color 0.3s, padding-left 0.2s;
+}
+
+aside ul li a:hover {
+    background-color: #3b82f6;
+    color: #fff;
+    padding-left: 8px;
+}
+
+/* === Misc Spacing === */
+p {
+    margin: 10px 0;
+}
+textarea{
+    resize: none;
+}
+</style>
+<body>
+    <div style="display: flex; min-height: 100vh;">
+        <!-- Sidebar -->
+        <aside style="width: 220px; background: #f2f2f2; padding: 20px;">
+    <h3>Admin Panel</h3>
+    <ul style="list-style: none; padding-left: 0;">
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    {% if request.user.role in 'ADMIN HR' %}
+        <li><a href="{% url 'employee_list' %}">Employees</a></li>
+        <li><a href="{% url 'task_list_admin' %}">Tasks</a></li>
+        <li><a href="{% url 'ticket_list_admin' %}">Tickets</a></li>
+        <li><a href="{% url 'department_list' %}">Departments</a></li>
+        <li><a href="{% url 'position_list' %}">Positions</a></li>
+        <li><a href="{% url 'benefit_list' %}">Benefits</a></li>
+        <li><a href="{% url 'payroll_list_all' %}">Payroll</a></li>
+        <li><a href="{% url 'performance_overview' %}">Reports</a></li>
+        <li><a href="{% url 'feedback_list' %}">Feedbacks</a></li>
+        <li><a href="{% url 'department_performance' %}">Dept Performance</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+    {% elif request.user.role == 'MANAGER' %}
+        <ul style="background-color: #0000000f;border-radius: 10px;list-style: none;margin-bottom: 5px;padding: 10px;">
+           <b> For Me</b>
+            <li><a href="{% url 'task_list_employee' %}">My Tasks</a></li>
+            <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}">My Profile </a></li>
+        </ul>
+        <ul style="background-color: #0000000f;border-radius: 10px;list-style: none;margin-bottom: 5px;padding: 10px;">
+            <b>Tasks</b>
+            <li><a href="{% url 'task_list_manager' %}">For Department</a></li>
+            <li><a href="{% url 'emp_task_list_manager' %}">For Employee</a></li>
+        </ul>
+        <li><a href="{% url 'employee_list' %}">Team Details</a></li>
+        <li><a href="{% url 'performance_overview' %}">Reports</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+    {% elif request.user.role == 'EMPLOYEE' %}
+        <li><a href="{% url 'task_list_employee' %}">My Tasks</a></li>
+        <li><a href="{% url 'payroll_list' request.user.employeeprofile.id %}">My Payroll</a></li>
+        <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}">My Profile </a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+    {% else %}
+        <li><a href="{% url 'customer_profile' %}">My Profile</a></li>
+        <li><a href="{% url 'customer_logout' %}">Logout</a></li>
+    {% endif %}
+</ul>
+
+</aside>
+
+
+        <!-- Main Content -->
+        <main style="flex: 1; padding: 20px;">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</body>
+</html>

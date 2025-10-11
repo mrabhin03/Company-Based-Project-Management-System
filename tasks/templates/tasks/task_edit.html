@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Edit Task</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label for="id_file">Attach files:</label>
+    <input type="file" name="file" id="id_file" multiple>
+    <button type="submit">Save Changes</button>
+</form>
+
+<h3>Attachments:</h3>
+<ul>
+    {% for attachment in tasksAtt %}
+        <li>
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+            (uploaded by {{ attachment.uploaded_by }} at {{ attachment.uploaded_at }})
+            {% if attachment.uploaded_by == request.user %}
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
+                <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+            </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No attachments.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

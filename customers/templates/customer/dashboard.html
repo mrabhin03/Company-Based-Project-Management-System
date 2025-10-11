@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}All Tickets{% endblock %}
+
+{% block content %}
+<h2>Dashboard</h2>
+<p>Welcome, {{ request.user.name }}</p>
+
+
+<h3>My Tickets</h3>
+<p>
+    <a href="{% url 'ticket_create' %}">Create Ticket</a> 
+</p>
+<table >
+    <tr>
+        <th>#</th>
+        <th>Subject</th>
+        <th>Status</th>
+        <th style="text-align: center;">Notifications</th>
+        <th>Actions</th>
+    </tr>
+    {% for ticket in tickets %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ ticket.subject }}</td>
+        <td>{{ ticket.status }}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">{% if ticket.Notification == 0 %}None{% else %}{{ ticket.Notification }}{% endif %}</td>
+        <td>
+            <a href="{% url 'Client_ticket_detail' ticket.id %}">View Details</a>
+            
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No tickets found.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

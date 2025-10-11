@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    th{
+        max-width:fit-content !important;
+    }
+    td{
+        width: 100%;
+    }
+</style>
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Task Details: {{ task.title }}</h2>
+<table>
+    <tr>
+        <th>Title</th>
+        <td>{{ task.title }}</td>
+    </tr>
+    <tr>
+        <th>Assigned To</th>
+        <td>{{ task.assigned_to.user.name }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ task.status }}</td>
+    </tr>
+    <tr>
+        <th>Deadline</th>
+        <td>{{ task.deadline }}</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>{{ task.description }}</td>
+    </tr>
+    <tr>
+        <th>Created At</th>
+        <td>{{ task.created_at }}</td>
+    </tr>
+    {% if task.ticket %}
+    <tr>
+        <th>Related Ticket</th>
+        <td>
+            <strong>Subject:</strong> {{ task.ticket.subject }}<br>
+            <strong>Description:</strong> {{ task.ticket.description }}<br>
+            <strong>Status:</strong> {{ task.ticket.status }}<br>
+        </td>
+    </tr>
+    {% endif %}
+    
+</table>
+<a href="{% url 'task_update_status' task.id %}" style="background-color: #28a745; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;">Update Status</a>
+
+{% if Outputs %}
+<h3>Outputs:</h3>
+    <ul>
+    {% for attachment in Outputs %}
+    
+        <li>
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+            (uploaded by <b>{{ attachment.uploaded_by }}</b> at {{ attachment.uploaded_at|date:"Y-m-d H:i" }})
+            {% if attachment.uploaded_by == request.user %}
+                <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
+                    {% csrf_token %}
+                    <input type="hidden" name="toLocation" value="task_employee_detail">
+                    <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
+                    <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No Outputs.</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<h3>Attachments:</h3>
+<ul>
+    {% for attachment in Attachs %}
+        <li>
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+            (uploaded by <b>{{ attachment.uploaded_by }}</b> at {{ attachment.uploaded_at|date:"Y-m-d H:i" }})
+            {% if attachment.uploaded_by == request.user %}
+                <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
+                    {% csrf_token %}
+                    <input type="hidden" name="toLocation" value="task_employee_detail">
+                    <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
+                    <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No attachments.</li>
+    {% endfor %}
+</ul>
+
+<h3>Manager/Admin Feedback & Comments:</h3>
+<ul>
+    {% for comment in task.comments.all %}
+        <li>
+            <strong>{{ comment.author }}:</strong> {{ comment.text }} <br>
+            {% if comment.attachment %}
+                <a href="{{ comment.attachment.url }}">Download feedback file</a>
+            {% endif %}
+            <em>Posted at {{ comment.created_at|date:"Y-m-d H:i" }}</em>
+        </li>
+    {% empty %}
+        <li>No feedback yet.</li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}

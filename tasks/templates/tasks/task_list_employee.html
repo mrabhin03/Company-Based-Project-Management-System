@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}My Tasks{% endblock %}
+
+{% block content %}
+<h2>My Tasks</h2>
+
+{% if tasks %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Deadline</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.title }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.description }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.status }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.deadline }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                <a href="{% url 'task_employee_detail' task.id %}" style="text-decoration: none;">View Details</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No tasks assigned.</p>
+{% endif %}
+
+{% endblock %}

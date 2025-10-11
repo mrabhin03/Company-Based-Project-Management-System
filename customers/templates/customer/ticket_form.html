@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<a href="{% if ticket %}{% url 'Client_ticket_detail' ticket.id %}{% else %}javascript:history.back(){% endif %}" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Ticket</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <label for="id_file">Attach files:</label>
+    <input type="file" name="file" id="id_file" multiple>
+    <button type="submit">Submit Ticket</button>
+</form>
+{% if ticket %}
+    <h4>Existing Attachments:</h4>
+    <ul>
+        {% for attachment in ticket.attachments.all %}
+            <li>
+                <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+                <a href="{% url 'delete_ticket_attachment' attachment.id %}">[Delete]</a>
+            </li>
+        {% empty %}
+            <li>No attachments yet.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

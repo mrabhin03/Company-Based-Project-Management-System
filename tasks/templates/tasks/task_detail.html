@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Task Details{% endblock %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<style>
+    th{
+        max-width:fit-content !important;
+    }
+    td{
+        width: 100%;
+    }
+</style>
+<h2>Task Details</h2>
+
+<table>
+    <tr>
+        <th>Title</th>
+        <td>{{ task.title }}</td>
+    </tr>
+    <tr>
+        <th>Assigned To</th>
+        <td>{% if task.assigned_department %}{{ task.assigned_department.name }}{% else %}{{ task.assigned_to.user.name }}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ task.status }}</td>
+    </tr>
+    <tr>
+        <th>Deadline</th>
+        <td>{{ task.deadline }}</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>{{ task.description }}</td>
+    </tr>
+    <tr>
+        <th>Created At</th>
+        <td>{{ task.created_at }}</td>
+    </tr>
+    {% if task.ticket %}
+    <tr>
+        <th>Related Ticket</th>
+        <td>
+            <strong>Subject:</strong> {{ task.ticket.subject }}<br>
+            <strong>Description:</strong> {{ task.ticket.description }}<br>
+            <strong>Status:</strong> {{ task.ticket.status }}<br>
+        </td>
+    </tr>
+    {% endif %}
+</table>
+<a style="background-color: #2874a7; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'task_edit' task.id %}">Edit Task</a>
+{% if task.assigned_department %}
+<a style="background-color: #2874a7; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'task_assign_from_task' task.id %}" style="text-decoration: none;">Create sub Task</a> 
+{% endif %}
+<a style="background-color: #2874a7; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'task_review' task.id %}">Review Task</a>
+<a href="{% url 'task_update_status' task.id %}" style="background-color: #28a745; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;">Update Status</a>
+
+{% if Outputs %}
+<h3>Outputs:</h3>
+    <ul>
+    {% for attachment in Outputs %}
+    
+        <li>
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+            (uploaded by <b>{{ attachment.uploaded_by }}</b> at {{ attachment.uploaded_at|date:"Y-m-d H:i" }})
+            {% if request.user.role == "ADMIN" or attachment.uploaded_by == request.user   or attachment.uploaded_by.role == "EMPLOYEE" and request.user.role == "MANAGER"   %}
+                <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
+                    {% csrf_token %}
+                    <input type="hidden" name="toLocation" value="task_detail">
+                    <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
+                    <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No Outputs.</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<h3>Attachments:</h3>
+<ul>
+    {% for attachment in Attachs %}
+        <li>
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
+            (uploaded by <b>{{ attachment.uploaded_by }}</b> at {{ attachment.uploaded_at|date:"Y-m-d H:i" }})
+            {% if request.user.role == "ADMIN" or attachment.uploaded_by == request.user   or attachment.uploaded_by.role == "EMPLOYEE" and request.user.role == "MANAGER"  %}
+                <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
+                    {% csrf_token %}
+                    <input type="hidden" name="toLocation" value="task_detail">
+                    <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
+                    <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No attachments.</li>
+    {% endfor %}
+</ul>
+
+<h3>Manager/Admin Feedback & Comments:</h3>
+<ul>
+    {% for comment in task.comments.all %}
+        <li>
+            <strong>{{ comment.author }}:</strong> {{ comment.text }} <br>
+            {% if comment.attachment %}
+                <a href="{{ comment.attachment.url }}">Download feedback file</a>
+            {% endif %}
+            <em>Posted at {{ comment.created_at }}</em>
+        </li>
+    {% empty %}
+        <li>No feedback yet.</li>
+    {% endfor %}
+</ul>
+
+<br>
+{% endblock %}

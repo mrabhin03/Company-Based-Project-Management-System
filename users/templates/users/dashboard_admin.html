@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<p>Welcome, {{ request.user.username }} ({{ request.user.role }})</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+
+    <!-- Employees Card -->
+    <div style="flex: 1 1 250px; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+        <h3>Employees</h3>
+        <p>Total Employees: <strong>{{ total_employees }}</strong></p>
+    </div>
+
+    <!-- Departments Card -->
+    <div style="flex: 1 1 250px; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+        <h3>Departments</h3>
+        <p>Total Departments: <strong>{{ total_departments }}</strong></p>
+    </div>
+
+    <!-- Tickets Card -->
+    <div style="flex: 1 1 400px; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+        <h3>Tickets</h3>
+        <p>Pending: {{ ticket_progress.pending }}</p>
+        <div style="background: #eee; border-radius: 5px; height: 20px; width: 100%; margin-bottom: 5px;">
+            <div style="width: {{ ticket_progress.in_progress_percent }}%; background: #f0ad4e; height: 100%; border-radius: 5px;"></div>
+            <div style="width: {{ ticket_progress.completed_percent }}%; background: #5cb85c; height: 100%; border-radius: 5px;"></div>
+        </div>
+        <p>In Progress: {{ ticket_progress.in_progress }}, Completed: {{ ticket_progress.completed }}</p>
+    </div>
+
+    <!-- Tasks Card -->
+    <div style="flex: 1 1 400px; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+        <h3>Tasks</h3>
+        <p>Pending: {{ task_progress.pending }}</p>
+        <div style="background: #eee; border-radius: 5px; height: 20px; width: 100%; margin-bottom: 5px;">
+            <div style="width: {{ task_progress.in_progress_percent }}%; background: #f0ad4e; height: 100%; border-radius: 5px;"></div>
+            <div style="width: {{ task_progress.completed_percent }}%; background: #5cb85c; height: 100%; border-radius: 5px;"></div>
+        </div>
+        <p>In Progress: {{ task_progress.in_progress }}, Completed: {{ task_progress.completed }}</p>
+    </div>
+
+</div>
+{% endblock %}

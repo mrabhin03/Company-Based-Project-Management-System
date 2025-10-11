@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.user.username }}{% endblock %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>{{ profile.user.name }} ({{ profile.user.role }})</h2>
+
+<div style="margin-bottom: 15px;">
+    <p><strong>Username:</strong> {{ profile.user.username }}</p>
+    <p><strong>Email:</strong> {{ profile.user.email }}</p>
+    <p><strong>Phone:</strong> {{ profile.user.phone }}</p>
+    <p><strong>Department:</strong> {{ profile.department }}</p>
+    <p><strong>Position:</strong> {{ profile.position }}</p>
+    <p><strong>Date of Joining:</strong> {{ profile.date_of_joining }}</p>
+    <p><strong>Salary:</strong> {{ profile.salary }}</p>
+    <p><strong>Skills:</strong> {{ profile.skills }}</p>
+    <a href="{% url 'edit_employee' profile_id=profile.id %}"><button>Edit</button></a>
+    <a href="{% url 'change_password' profile_id=profile.id %}"><button>Change Password</button></a>
+</div>
+
+{% endblock %}

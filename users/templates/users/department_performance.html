@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<style>
+    .perf-container { padding:20px; }
+.range-form { margin-bottom:20px; }
+.dept-card { border:1px solid #ddd; border-radius:8px; padding:16px; margin-bottom:24px; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+.dept-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+.subdeps a { margin-left:10px; text-decoration:none; color:#007bff; }
+.charts-row { display:flex; flex-wrap:wrap; gap:20px; }
+.chart-item { flex:1; min-width:300px; }
+
+</style>
+
+<div class="perf-container">
+    <h2>Department Performance Dashboard</h2>
+
+    <form method="get" class="range-form">
+        <label>Time Range:
+            <select name="range" onchange="this.form.submit()">
+                <option value="1m" {% if range_param == '1m' %}selected{% endif %}>Current Month</option>
+                <option value="6m" {% if range_param == '6m' %}selected{% endif %}>Last 6 Months</option>
+                <option value="1y" {% if range_param == '1y' %}selected{% endif %}>Last 12 Months</option>
+            </select>
+        </label>
+    </form>
+
+    {% for depblock in data %}
+    <div class="dept-card">
+        <div class="dept-header">
+            <h3>{{ depblock.department.name }}</h3>
+            {% if depblock.subdepartments.exists %}
+            <div class="subdeps">
+                <span>Subdepartments:</span>
+                {% for sub in depblock.subdepartments %}
+                <a href="{% url 'department_performance_detail' sub.id %}?range={{ range_param }}">{{ sub.name }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="charts-row">
+            <div class="chart-item">
+                <canvas id="tasksChart_{{ depblock.department.id }}"></canvas>
+            </div>
+            <div class="chart-item">
+                <canvas id="ratingChart_{{ depblock.department.id }}"></canvas>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+{% for depblock in data %}
+const labels_{{ depblock.department.id }} = {{ depblock.labels|safe }};
+const datasets_{{ depblock.department.id }} = {{ depblock.datasets|safe }};
+const rating_{{ depblock.department.id }} = {{ depblock.rating_dataset|safe }};
+
+// Tasks stacked bar
+new Chart(document.getElementById('tasksChart_{{ depblock.department.id }}').getContext('2d'), {
+    type: 'bar',
+    data: { labels: labels_{{ depblock.department.id }}, datasets: datasets_{{ depblock.department.id }} },
+    options: { responsive:true, plugins:{title:{display:true,text:'Tasks by Status'}}, scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}} }
+});
+
+// Rating line
+new Chart(document.getElementById('ratingChart_{{ depblock.department.id }}').getContext('2d'), {
+    type:'line',
+    data: { labels: labels_{{ depblock.department.id }}, datasets:[rating_{{ depblock.department.id }}] },
+    options:{ responsive:true, plugins:{title:{display:true,text:'Average Rating'}}, scales:{y:{beginAtZero:true,max:5}} }
+});
+{% endfor %}
+</script>
+{% endblock %}

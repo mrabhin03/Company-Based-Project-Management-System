@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Edit{% endblock %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+          text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>Edit Employee: {{ profile.user.name }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {% if request.user.role != 'EMPLOYEE' %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+  {% else %}
+    {{ EmpSelfEditF1.as_p }}
+    {{ EmpSelfEditF2.as_p }}
+  {% endif %}
+  <button type="submit">Save</button>
+</form>
+<p><a href="javascript:history.back()">Back to list</a></p>
+{% endblock %}

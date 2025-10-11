@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Salary{% endblock %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
+<h2>{{ employee.user.name }} - {% if form.instance.id %}Edit Payroll{% else %}Add Payroll{% endif %}</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Departments{% endblock %}
+
+{% block content %}
+<h2>Departments</h2>
+
+<a href="{% url 'department_create' %}" style="display: inline-block; margin-bottom: 15px; padding: 6px 10px; text-decoration: none;">
+    Create Department
+</a>
+
+{% if departments %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Manager</th>
+            <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;" >Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dept in departments %}
+        <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.name }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.description }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.manager.name }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">
+                <a href="{% url 'department_view' dept.id %}" style="text-decoration: none;">View</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No Departments Found.</p>
+{% endif %}
+
+{% endblock %}

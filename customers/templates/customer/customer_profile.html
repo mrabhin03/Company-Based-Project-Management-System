@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Profile</h2>
+<p><strong>Name:</strong> {{ customer.user.name }}</p>
+<p><strong>Email:</strong> {{ customer.user.email }}</p>
+<p><strong>Address:</strong> {{ customer.address }}</p>
+<a href="{% url 'customer_edit' %}">Edit Details</a> |
+<a href="{% url 'customer_change_password' %}">Change Password</a>
+{% endblock %}
