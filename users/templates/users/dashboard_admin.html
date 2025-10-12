@@ -22,10 +22,9 @@
         <h3>Tickets</h3>
         <p>Pending: {{ ticket_progress.pending }}</p>
         <div style="background: #eee; border-radius: 5px; height: 20px; width: 100%; margin-bottom: 5px;">
-            <div style="width: {{ ticket_progress.in_progress_percent }}%; background: #f0ad4e; height: 100%; border-radius: 5px;"></div>
             <div style="width: {{ ticket_progress.completed_percent }}%; background: #5cb85c; height: 100%; border-radius: 5px;"></div>
         </div>
-        <p>In Progress: {{ ticket_progress.in_progress }}, Completed: {{ ticket_progress.completed }}</p>
+        <p>Total: {{ ticket_progress.total }}, Completed: {{ ticket_progress.completed }}</p>
     </div>
 
     <!-- Tasks Card -->
@@ -33,10 +32,9 @@
         <h3>Tasks</h3>
         <p>Pending: {{ task_progress.pending }}</p>
         <div style="background: #eee; border-radius: 5px; height: 20px; width: 100%; margin-bottom: 5px;">
-            <div style="width: {{ task_progress.in_progress_percent }}%; background: #f0ad4e; height: 100%; border-radius: 5px;"></div>
             <div style="width: {{ task_progress.completed_percent }}%; background: #5cb85c; height: 100%; border-radius: 5px;"></div>
         </div>
-        <p>In Progress: {{ task_progress.in_progress }}, Completed: {{ task_progress.completed }}</p>
+        <p>Total: {{ task_progress.total }}, Completed: {{ task_progress.completed }}</p>
     </div>
 
 </div>

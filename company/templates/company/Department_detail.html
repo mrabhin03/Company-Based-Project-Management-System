@@ -19,6 +19,7 @@
     <!-- Department Details -->
     <h2 style="margin-bottom: 5px;">{{ department.name }}</h2>
     <p><strong>Description:</strong> {{ department.description }}</p>
+    <p><strong>Manager:</strong> {% if department.manager %} {{ department.manager.name }}{% else %}Not set{%endif%}</p>
     <p><strong>Created at:</strong> {{ department.created_at|date:"M d, Y H:i" }}</p>
     <a style="background-color: #7f0505; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"

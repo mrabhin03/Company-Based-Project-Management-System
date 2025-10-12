@@ -46,8 +46,17 @@ def user_login(request):
 def user_logout(request):
     auth_logout(request)
     return redirect('login')
+def getAllChildren(dept):
+    children = [dept]
 
-# Dashboard - role-aware
+    def _get_children(t):
+        for child in t.sub_departments.all():
+            children.append(child)
+            _get_children(child) 
+
+    _get_children(dept)
+    return children
+
 @login_required
 def dashboard(request):
     user = request.user
@@ -58,12 +67,10 @@ def dashboard(request):
         total_employees = EmployeeProfile.objects.count()
         total_departments = Department.objects.count()
 
-        # Tickets
         total_tickets = Ticket.objects.count()
-        pending_tickets = Ticket.objects.filter(status='Pending').count()
         in_progress_tickets = Ticket.objects.filter(status='In Progress').count()
         completed_tickets = Ticket.objects.filter(status='Resolved').count()
-
+        pending_tickets = total_tickets-completed_tickets
         ticket_progress = {
             'pending': pending_tickets,
             'in_progress': in_progress_tickets,
@@ -72,20 +79,14 @@ def dashboard(request):
             'completed_percent': int((completed_tickets/total_tickets)*100) if total_tickets else 0,
             'in_progress_percent': int((in_progress_tickets/total_tickets)*100) if total_tickets else 0
         }
-
-        # Tasks
         total_tasks = Task.objects.count()
-        pending_tasks = Task.objects.filter(status='Assigned').count()
-        in_progress_tasks = Task.objects.filter(status='In Progress').count()
         completed_tasks = Task.objects.filter(status='Completed').count()
-
+        pending_tasks = total_tasks-completed_tasks
         task_progress = {
             'pending': pending_tasks,
-            'in_progress': in_progress_tasks,
             'completed': completed_tasks,
             'total': total_tasks,
             'completed_percent': int((completed_tasks/total_tasks)*100) if total_tasks else 0,
-            'in_progress_percent': int((in_progress_tasks/total_tasks)*100) if total_tasks else 0
         }
 
         context = {
@@ -106,6 +107,28 @@ def dashboard(request):
         return render(request, 'users/dashboard_employee.html', context)
 
     elif user.role == 'MANAGER':
+        dept=getAllChildren(user.employeeprofile.department)
+        total_employees = EmployeeProfile.objects.filter(department__in=dept).count()
+        total_departments =len(dept)
+        
+        total_tasks = Task.objects.filter(
+            Q(assigned_department__in=dept) | Q(assigned_to__department__in=dept)
+        ).count()
+        completed_tasks = Task.objects.filter(
+            Q(assigned_department__in=dept) | Q(assigned_to__department__in=dept),status='Completed'
+        ).count()
+        pending_tasks = total_tasks-completed_tasks
+        task_progress = {
+            'pending': pending_tasks,
+            'completed': completed_tasks,
+            'total': total_tasks,
+            'completed_percent': int((completed_tasks/total_tasks)*100) if total_tasks else 0,
+        }
+        context = {
+            'total_employees': total_employees,
+            'total_departments': total_departments,
+            'task_progress': task_progress,
+        }
         return render(request, 'users/dashboard_manager.html', context)
     else:
         return redirect("customer_dashboard")
