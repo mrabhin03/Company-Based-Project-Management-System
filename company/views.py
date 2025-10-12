@@ -9,7 +9,13 @@ def is_admin(user):
 
 @user_passes_test(is_admin, login_url='/users/login/')
 def department_list(request):
-    return render(request, 'company/department_list.html', {'departments': Department.objects.all()})
+    value=0
+    if request.method == 'GET' and request.GET.get("department") and request.GET.get("department")=="1":
+        value=1
+        depatList=Department.objects.all()
+    else:
+        depatList=Department.objects.filter(parent=None)
+    return render(request, 'company/department_list.html', {'departments': depatList,'value':value})
 
 @user_passes_test(is_admin, login_url='/users/login/')
 def department_create(request):
@@ -17,13 +23,17 @@ def department_create(request):
         form = DepartmentForm(request.POST)
         if form.is_valid():
             form.save()
+            if request.POST.get("parent"):
+                return redirect('department_view',request.POST.get("parent"))
             return redirect('department_list')
     else:
+        parent=None
         if request.method == 'GET' and request.GET.get("parent"):
             form = DepartmentForm(initial={'parent': request.GET.get("parent")})
+            parent=request.GET.get("parent")
         else:
             form = DepartmentForm()
-    return render(request, 'company/department_form.html', {'form': form})
+    return render(request, 'company/department_form.html', {'form': form,'parent':parent})
 
 def get_all_sub_departments(department):
     sub_departments = Department.objects.filter(parent=department)
@@ -38,11 +48,12 @@ def department_view(request, dept_id):
     sub_departments = Department.objects.filter(parent=department)
     all_departments = [department] + get_all_sub_departments(department)
     employees = EmployeeProfile.objects.filter(department__in=all_departments)
+    positions=Position.objects.filter(department__in=all_departments)
     return render(request, 'company/Department_detail.html', {
         'department': department,
         'sub_departments': sub_departments,
-        'employees':employees
-
+        'employees':employees,
+        'positions':positions
     })
 
 @user_passes_test(is_admin)
@@ -52,7 +63,7 @@ def department_edit(request, pk):
         form = DepartmentForm(request.POST, instance=department)
         if form.is_valid():
             form.save()
-            return redirect('department_list')
+            return redirect('department_view',department.id)
     else:
         form = DepartmentForm(instance=department)
     return render(request, 'company/department_form.html', {'form': form})
@@ -68,10 +79,17 @@ def position_create(request):
         form = PositionForm(request.POST)
         if form.is_valid():
             form.save()
+            if request.POST.get("parent"):
+                return redirect('department_view',request.POST.get("parent"))
             return redirect('position_list')
     else:
-        form = PositionForm()
-    return render(request, 'company/position_form.html', {'form': form})
+        parent=None
+        if request.method == 'GET' and request.GET.get("parent"):
+            parent=request.GET.get("parent")
+            form = PositionForm(initial={'department': request.GET.get("parent")})
+        else:
+            form = PositionForm()
+    return render(request, 'company/position_form.html', {'form': form,'parent':parent})
 
 @user_passes_test(is_admin)
 def position_edit(request, pk):
@@ -80,6 +98,8 @@ def position_edit(request, pk):
         form = PositionForm(request.POST, instance=position)
         if form.is_valid():
             form.save()
+            if request.POST.get("parent"):
+                return redirect('department_view',request.POST.get("parent"))
             return redirect('position_list')
     else:
         form = PositionForm(instance=position)

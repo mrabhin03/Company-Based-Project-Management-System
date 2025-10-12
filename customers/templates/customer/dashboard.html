@@ -3,6 +3,35 @@
 {% block title %}All Tickets{% endblock %}
 
 {% block content %}
+<style>
+    th,td{
+        padding: 8px; text-align: left; border-bottom: 1px solid #ddd;
+    }
+    .Progess{
+        width: 200px;
+        background-color: rgba(0, 0, 0, 0.111);
+        height: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: baseline;
+        overflow: hidden;
+        position: relative;
+    }
+    .Progess .bar{
+        width: 50%;
+        height: 100%;
+        border-radius: 10px;
+    }   
+    .Progess > span{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 12px;
+        font-weight: 700;
+    }
+</style>
 <h2>Dashboard</h2>
 <p>Welcome, {{ request.user.name }}</p>
 
@@ -17,6 +46,7 @@
         <th>Subject</th>
         <th>Status</th>
         <th style="text-align: center;">Notifications</th>
+        <th>Prograss</th>
         <th>Actions</th>
     </tr>
     {% for ticket in tickets %}
@@ -24,10 +54,14 @@
         <td>{{ forloop.counter }}</td>
         <td>{{ ticket.subject }}</td>
         <td>{{ ticket.status }}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">{% if ticket.Notification == 0 %}No Notifications{% else %}{{ ticket.Notification }}{% endif %}</td>
+        <td style="text-align: center;">{% if ticket.Notification == 0 %}No Notifications{% else %}{{ ticket.Notification }}{% endif %}</td>
+        <td><div class="Progess">
+            <span>{{ticket.per}}%</span>
+            <div class="bar" style="width: {{ticket.per}}%;background-color: rgba(6, 224, 6, 0.7{{ticket.per}});">
+            </div>
+        </div></td>
         <td>
             <a href="{% url 'Client_ticket_detail' ticket.id %}">View Details</a>
-            
         </td>
     </tr>
     {% empty %}

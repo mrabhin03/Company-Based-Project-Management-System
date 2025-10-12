@@ -7,7 +7,6 @@ class TaskForm(forms.ModelForm):
         model = Task
         fields = ['ticket', 'title', 'description','deadline',  'status','assigned_to']
         widgets = {
-            'assigned_employees': forms.CheckboxSelectMultiple(),
             'deadline': forms.DateInput(
                 attrs={'type': 'date'}, 
                 format='%Y-%m-%d'       
@@ -19,7 +18,6 @@ class TaskFormEdit(forms.ModelForm):
         model = Task
         fields = ['ticket', 'title', 'description','deadline','status']
         widgets = {
-            'assigned_employees': forms.CheckboxSelectMultiple(),
             'deadline': forms.DateInput(
                 attrs={'type': 'date'}, 
                 format='%Y-%m-%d'       
@@ -29,6 +27,8 @@ class TaskFormEdit(forms.ModelForm):
 
 class TaskStatus(forms.Form):
     STATUS_CHOICES = [
+    ('Main Tasks','Main Tasks'),
+    ('All', 'All'),
     ('Assigned', 'Assigned'),
     ('In Progress', 'In Progress'),
     ('Submitted', 'Submitted'),

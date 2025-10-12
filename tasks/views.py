@@ -21,23 +21,25 @@ def get_all_subdepartments(department):
 @admin_required
 def task_list_admin(request):
     TaskFilter=TaskStatus()
-    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="0":
-        tasks = Task.objects.filter(status=request.GET.get('Status'))
+    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="Main Tasks":
+        if request.GET.get('Status')=="All":
+            tasks = Task.objects.all()
+        else:
+            tasks = Task.objects.filter(status=request.GET.get('Status'))
         TaskFilter = TaskStatus(initial={'Status': request.GET.get('Status')})
     else:
-        tasks = Task.objects.all()
+        tasks = Task.objects.filter(parent_task=None)
     return render(request, 'tasks/task_list_admin.html', {'tasks': tasks,"status":TaskFilter})
 
 @login_required
 @manager_required
 def task_list_manager(request):
     TaskFilter=TaskStatus()
-    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="0":
-        managed_departments = Department.objects.filter(manager=request.user)
+    managed_departments = Department.objects.filter(manager=request.user)
+    if request.method == 'GET' and request.GET.get('Status') and request.GET.get('Status')!="All":
         tasks = Task.objects.filter(assigned_department__in=managed_departments,status=request.GET.get('Status'))
         TaskFilter = TaskStatus(initial={'Status': request.GET.get('Status')})
     else:
-        managed_departments = Department.objects.filter(manager=request.user)
         tasks = Task.objects.filter(assigned_department__in=managed_departments)
     return render(request, 'tasks/task_list_manager.html', {'tasks': tasks,"status":TaskFilter,"Title":"Department Tasks"})
 
@@ -92,7 +94,7 @@ def task_edit(request, task_id):
     # Handle attachment deletion
     if request.method == 'POST' and 'delete_attachment_id' in request.POST:
         attachment_id = request.POST.get('delete_attachment_id')
-        attachment = get_object_or_404(TaskAttachment, id=attachment_id, task=task)
+        attachment = get_object_or_404(TaskAttachment, id=attachment_id)
         attachment.file.delete(save=False)
         attachment.delete() 
         if request.POST.get("toLocation"):
@@ -121,6 +123,7 @@ def task_edit(request, task_id):
 def task_list_employee(request):
     tasks = Task.objects.filter(assigned_to=request.user.employeeprofile)
     return render(request, 'tasks/task_list_employee.html', {'tasks': tasks})
+
 
 @login_required
 def task_update_status(request, task_id):
@@ -168,6 +171,8 @@ def task_decline(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     ticket_id = task.ticket.id
     task.delete()
+    if request.GET.get("NextPath")=="task_detail":
+        return redirect(request.GET.get("NextPath"), ticket_id)
     return redirect(request.GET.get("NextPath"), ticket_id=ticket_id)
 
 @login_required
@@ -176,13 +181,10 @@ def task_assign_from_task(request, task_id):
     parent_task = get_object_or_404(Task, id=task_id)
     sub_departments = Department.objects.filter(parent=parent_task.assigned_department)
 
-    
-    sub_departments = Department.objects.filter(parent=parent_task.assigned_department)
-
     if sub_departments.exists():
-        employees = EmployeeProfile.objects.filter(department__in=sub_departments)
+        employees = EmployeeProfile.objects.filter(department__in=sub_departments).exclude(user=request.user)
     else:
-        employees = EmployeeProfile.objects.filter(department=parent_task.assigned_department)
+        employees = EmployeeProfile.objects.filter(department=parent_task.assigned_department).exclude(user=request.user)
 
     return render(request, "tasks/Task_Assign.html", {
         "parent_task": parent_task,
@@ -264,16 +266,41 @@ def task_review(request, task_id):
         'comment_form': comment_form,
     })
 
+def fromParent(task):
+    parents = [task]
+    current = task.parent_task
+
+    while current is not None:
+        parents.append(current)
+        current = current.parent_task 
+    return parents
+
+def getAllChildren(task):
+    children = [task]
+
+    def _get_children(t):
+        print(t)
+        for child in t.subtasks.all():
+            children.append(child)
+            _get_children(child) 
+
+    _get_children(task)
+    print(children)
+    return children
+
 @login_required
 def task_employee_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    Outputs = TaskAttachment.objects.filter(Output=True,task=task)
-    Attachs = TaskAttachment.objects.filter(Output=False,task=task)
-    return render(request, 'tasks/task_employee_detail.html', {'task': task,'Outputs':Outputs,'Attachs':Attachs})
+    Outputs = TaskAttachment.objects.filter(Output=True,task__in=getAllChildren(task))
+    Attachs = TaskAttachment.objects.filter(Output=False,task__in=fromParent(task))
+    comments=TaskComment.objects.filter(task__in=fromParent(task))
+    return render(request, 'tasks/task_employee_detail.html', {'task': task,'Outputs':Outputs,'Attachs':Attachs,'comments':comments})
 
 
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    Outputs = TaskAttachment.objects.filter(Output=True,task=task)
-    Attachs = TaskAttachment.objects.filter(Output=False,task=task)
-    return render(request, 'tasks/task_detail.html', {'task': task,'Outputs':Outputs,'Attachs':Attachs})
+    Outputs = TaskAttachment.objects.filter(Output=True,task__in=getAllChildren(task))
+    Attachs = TaskAttachment.objects.filter(Output=False,task__in=fromParent(task))
+    comments=TaskComment.objects.filter(task__in=fromParent(task))
+    childTask=Task.objects.filter(parent_task=task)
+    return render(request, 'tasks/task_detail.html', {'task': task,'Outputs':Outputs,'Attachs':Attachs,'comments':comments,'childTask':childTask})

@@ -39,9 +39,6 @@ class Task(models.Model):
     assigned_department = models.ForeignKey(
         Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='department_tasks'
     )
-    assigned_employees = models.ManyToManyField(
-        EmployeeProfile, blank=True, related_name='employee_tasks'
-    )
     deadline = models.DateField(null=True, blank=True,default=default_deadline) 
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Assigned')
@@ -80,12 +77,12 @@ class Task(models.Model):
         current_ticket_status = self.ticket.status
         ticket_updated = False
         if not incomplete_tasks_exist:
-            if current_ticket_status not in ['RESOLVED', 'CLOSED']:
-                self.ticket.status = 'RESOLVED'
+            if current_ticket_status not in ['Resolved', 'Closed']:
+                self.ticket.status = 'Finishing'
                 ticket_updated = True
         else:
-            if current_ticket_status in ['RESOLVED', 'CLOSED','PENDING']:
-                self.ticket.status = 'IN_PROGRESS'
+            if current_ticket_status in ['Resolved', 'Closed','Pending']:
+                self.ticket.status = 'In Progress'
                 ticket_updated = True
         if ticket_updated:
             self.ticket.save(update_fields=['status'])

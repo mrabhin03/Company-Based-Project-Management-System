@@ -52,16 +52,33 @@
     
 </table>
 <a href="{% url 'task_update_status' task.id %}" style="background-color: #28a745; color: white; padding: 8px 15px; 
-                  text-decoration: none; border-radius: 6px; font-size: 14px;">Update Status</a>
+                  text-decoration: none; border-radius: 6px; font-size: 14px;">Update Status/Upload Output</a>
 
 {% if Outputs %}
 <h3>Outputs:</h3>
-    <ul>
+<table>
+    <tr>
+        <th>#</th>
+        <th>File</th>
+        <th>Uploaded By</th>
+        <th>Uploaded On</th>
+        <th>Action</th>
+    </tr>
     {% for attachment in Outputs %}
-    
-        <li>
-            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
-            (uploaded by <b>{{ attachment.uploaded_by }}</b> at {{ attachment.uploaded_at|date:"Y-m-d H:i" }})
+    <tr>
+        <td  style="width: fit-content;">
+            O{{ forloop.counter }}
+        </td>
+        <td style="width: fit-content;">
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name|cut:"task/attachments/" }}</a>
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_by }}
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
+        </td>
+        <td  style="width: fit-content;">
             {% if attachment.uploaded_by == request.user %}
                 <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
                     {% csrf_token %}
@@ -70,19 +87,38 @@
                     <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
                 </form>
             {% endif %}
-        </li>
+        </td>
+    </tr>
     {% empty %}
-        <li>No Outputs.</li>
-{% endfor %}
-</ul>
+        <tr>No Outputs.</tr>
+    {% endfor %}
+</table>
 {% endif %}
 
 <h3>Attachments:</h3>
-<ul>
+<table>
+    <tr>
+        <th>#</th>
+        <th>File</th>
+        <th>Uploaded By</th>
+        <th>Uploaded On</th>
+        <th>Action</th>
+    </tr>
     {% for attachment in Attachs %}
-        <li>
-            <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
-            (uploaded by <b>{{ attachment.uploaded_by }}</b> at {{ attachment.uploaded_at|date:"Y-m-d H:i" }})
+        <tr>
+        <td  style="width: fit-content;">
+            A{{ forloop.counter }}
+        </td>
+        <td style="width: fit-content;">
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name|cut:"task/attachments/" }}</a>
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_by }}
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
+        </td>
+        <td style="width: fit-content;">
             {% if attachment.uploaded_by == request.user %}
                 <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
                     {% csrf_token %}
@@ -90,16 +126,20 @@
                     <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
                     <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
                 </form>
+            {% else %}
+                <p>No permission to delete</p>
             {% endif %}
-        </li>
+
+            </td>
+        </tr>
     {% empty %}
-        <li>No attachments.</li>
+        <tr>No attachments.</tr>
     {% endfor %}
-</ul>
+</table>
 
 <h3>Manager/Admin Feedback & Comments:</h3>
 <ul>
-    {% for comment in task.comments.all %}
+    {% for comment in comments %}
         <li>
             <strong>{{ comment.author }}:</strong> {{ comment.text }} <br>
             {% if comment.attachment %}

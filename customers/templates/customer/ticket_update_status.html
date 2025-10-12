@@ -1,6 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Ticket Edit{% endblock %}
+
+{% block content %}
+<a href="javascript:history.back()" 
+    style="background-color: #007bff; color: white; padding: 8px 15px; 
+            text-decoration: none; border-radius: 6px; font-size: 14px;">
+    ← Back
+</a>
 <h2>Update Ticket Status: {{ ticket.title }}</h2>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
+    <label for="id_file">Upload deliverable(s):</label>
+    <input type="file" name="file" id="id_file" multiple>
+    <button type="submit">Send</button>
 </form>
+{% endblock %}

@@ -14,18 +14,19 @@ class Customer(models.Model):
     def __str__(self):
         return self.user.username
 STATUS_CHOICES = [
-    ('PENDING', 'Pending'),
-    ('OPEN', 'Open'),
-    ('IN_PROGRESS', 'In Progress'),
-    ('RESOLVED', 'Resolved'),
-    ('CLOSED', 'Closed'),
+    ('Pending', 'Pending'),
+    ('Open', 'Open'),
+    ('In Progress', 'In Progress'),
+    ('Resolved', 'Resolved'),
+    ('Finishing', 'Finishing'),
+    ('Closed', 'Closed'),
 ]
 
 class Ticket(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='tickets')
     subject = models.CharField(max_length=200)
     description = models.TextField()
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

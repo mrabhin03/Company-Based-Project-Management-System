@@ -26,7 +26,9 @@
         place-items: center;
         font-size: 10px;
     }
+    
 </style>
+
 <h2>Ticket Details</h2>
 
 <table>
@@ -53,10 +55,83 @@
 </table>
 {% if ticket.status != 'COMPLETED' %}
 <a style="background-color: #2878a7; color: white; padding: 8px 15px; 
-                  text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'ticket_assign' ticket.id %}">Assign</a>
+                  text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'ticket_assign' ticket.id %}">Assign new tasks</a>
 {% endif %}
 <a style="background-color: #2861a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'ticket_response' ticket.id %}">Respond to client {% if ticket.notification != 0 %} <span class="notify">{{ticket.notification}}</span>{% endif %}</a>
+<a href="{% url 'ticket_update_status' ticket.id %}" style="background-color: #28a745; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;margin-left: 5px;">Send Output</a>
+
+
+<style>
+    .myTables th,.myTablestd{
+        padding: 8px; text-align: left; border-bottom: 1px solid #ddd;
+    }
+</style>
+{% if Outputs %}
+<hr>
+<h3>Outputs:</h3>
+<table class="myTables">
+    <tr>
+        <th>#</th>
+        <th>File</th>
+        <th>Uploaded By</th>
+        <th>Uploaded On</th>
+    </tr>
+    {% for attachment in Outputs %}
+    <tr>
+        <td  style="width: fit-content;">
+            O{{ forloop.counter }}
+        </td>
+        <td style="width: fit-content;">
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name|cut:"ticket_attachments/" }}</a>
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_by }}
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
+        </td>
+    </tr>
+    {% empty %}
+        <tr>No Outputs.</tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<hr>
+<h3>Tasks:</h3>
+{% if tasksdetails %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th >#</th>
+            <th >Title</th>
+            <th >Assigned To</th>
+            <th style="width: fit-content;">Status</th>
+            <th style="width: fit-content;">Deadline</th>
+            <th style="width: fit-content;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasksdetails %}
+        <tr>
+            <td style="width: fit-content;">{{ forloop.counter }}</td>
+            <td style="width: fit-content;">{{ task.title }}</td>
+            <td style="width: fit-content;">{% if task.assigned_department %}Dept: {{task.assigned_department.name}}{% else %}{{ task.assigned_to.user.name }}{% endif %}</td>
+            <td style="width: fit-content;">{{ task.status }}</td>
+            <td style="width: fit-content;">{{ task.deadline|date:"Y-m-d" }}</td>
+            <td style="width: fit-content;">
+                <a href="{% url 'task_detail' task.id %}" style="text-decoration: none;">View Details</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No tasks available.</p>
+{% endif %}
+
 <h3>Attachments:</h3>
 <ul>
     {% for file in attachments %}

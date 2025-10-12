@@ -4,28 +4,36 @@
 
 {% block content %}
 <h2>All Tickets</h2>
-
+<style>
+    th,td{
+        padding: 8px; text-align: left; border-bottom: 1px solid #ddd;
+    }
+</style>
 {% if tickets %}
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Customer</th>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;text-align: center;">Notifications</th>
-            <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;">Actions</th>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th style="text-align: center;">Notifications</th>
+            <th style="text-align: center;">Total Tasks</th>
+            <th style="text-align: center;">Pending Tasks</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for ticket in tickets %}
         <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.customer.user.name }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.subject }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ ticket.status }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">{% if ticket.Notification == 0 %}None{% else %}{{ ticket.Notification }}{% endif %}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ ticket.customer.user.name }}</td>
+            <td>{{ ticket.subject }}</td>
+            <td>{{ ticket.status }}</td>
+            <td style="text-align: center;">{% if ticket.Notification == 0 %}---{% else %}{{ ticket.Notification }}{% endif %}</td>
+            <td style="text-align: center;">{{ ticket.total }}</td>
+            <td style="text-align: center;">{{ ticket.pending }}</td>
+            <td style="text-align: center;">
                 <a href="{% url 'ticket_detail' ticket.id %}">View details</a>
             </td>
 

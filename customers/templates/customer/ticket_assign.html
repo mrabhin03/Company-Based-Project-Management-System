@@ -3,7 +3,7 @@
 {% block title %}All Tickets{% endblock %}
 
 {% block content %}
-<a href="javascript:history.back()" 
+<a href="{% url 'ticket_detail' ticket.id %}" 
     style="background-color: #007bff; color: white; padding: 8px 15px; 
             text-decoration: none; border-radius: 6px; font-size: 14px;">
     ← Back
@@ -16,7 +16,8 @@
   {% for task in ticket.tasks.all %}
     <div style="border:1px solid #ccc; padding:15px; margin-bottom:10px; border-radius:6px; background:#fdfdfd; display:flex; justify-content:space-between; align-items:center;">
       <div>
-        <strong>Assigned To:</strong> {{ task.assigned_to.user.name }}<br>
+        <strong>Type:</strong> {% if task.assigned_department %}Department{%else%}Employee{%endif%}<br>
+        <strong>Assigned To:</strong> {% if task.assigned_department %}{{task.assigned_department.name}} (Dep){%else%}{{ task.assigned_to.user.name }}(Emp){%endif%}<br>
         <strong>Status:</strong> {{ task.status }}<br>
         <strong>Title:</strong> {{ task.title }}<br>
         <strong>Description:</strong> {{ task.description }}<br>

@@ -49,6 +49,16 @@ def customer_logout(request):
 def customer_dashboard(request):
     tickets = request.user.customer.tickets.all()
     for tic in tickets:
+        taskDetails=getTicketDetails(tic)
+        total=taskDetails[0]
+        pending=taskDetails[1]
+        if total==0:
+            per=0
+        elif pending==0 and tic.status!="Resolved":
+            per=95
+        else:
+            per=int(((total-pending)/total)*100)
+        tic.per=per
         responses = tic.responses.filter(
             is_customer_reply=False,
             status=False
@@ -95,7 +105,7 @@ def ticket_edit(request, ticket_id):
             return redirect('customer_dashboard')
     else:
         form = TicketForm(instance=ticket)
-    attachments = ticket.attachments.all()
+    attachments = ticket.attachments.filter(Output=False)
     return render(request, 'customer/ticket_form.html', {'form': form, 'ticket': ticket,'attachment':attachments})
 
 @login_required
@@ -111,30 +121,42 @@ def delete_ticket_attachment(request, attachment_id):
 
 def ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    attachments = ticket.attachments.all()
+    attachments = ticket.attachments.filter(Output=False)
+    Outputs = ticket.attachments.filter(Output=True)
     responses_count = ticket.responses.filter(
         is_customer_reply=True,
         status=False
     ).count()
     ticket.notification=responses_count
-
-    return render(request, 'customer/ticket_detail.html', {'ticket': ticket, 'attachments': attachments})
+    tasksdetails=Task.objects.filter(ticket=ticket,parent_task=None)
+    return render(request, 'customer/ticket_detail.html', {'ticket': ticket, 'attachments': attachments,"tasksdetails":tasksdetails,"Outputs":Outputs})
 
 def Client_ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
-    attachments = ticket.attachments.all()
+    attachments = ticket.attachments.filter(Output=False)
+    Outputs = ticket.attachments.filter(Output=True)
     responses_count = ticket.responses.filter(
         is_customer_reply=False,
         status=False
     ).count()
     ticket.notification=responses_count
-
-    return render(request, 'customer/Clients_ticketView.html', {'ticket': ticket, 'attachments': attachments})
-
+    return render(request, 'customer/Clients_ticketView.html', {'ticket': ticket, 'attachments': attachments,"Outputs":Outputs})
+def getTicketDetails(ticket):
+    total=0
+    pending=0
+    tasks=Task.objects.filter(ticket=ticket)
+    for tic in tasks:
+        total+=1
+        if tic.status!="Completed":
+            pending+=1
+    return [total,pending]
 
 def ticket_list_admin(request):
     tickets = Ticket.objects.all()
     for tic in tickets:
+        taskDetails=getTicketDetails(tic)
+        tic.total=taskDetails[0] if taskDetails[0]!=0 else "No Tasks"
+        tic.pending=taskDetails[1] if taskDetails[1]!=0 else "No Pending"
         responses = tic.responses.filter(
             is_customer_reply=True,
             status=False
@@ -149,7 +171,14 @@ def ticket_update_status(request, ticket_id):
         form = TicketStatusForm(request.POST, instance=ticket)
         if form.is_valid():
             form.save()
-            return redirect('ticket_list_admin')
+            for f in request.FILES.getlist('file'):
+                TicketAttachment.objects.create(
+                    ticket=ticket,
+                    file=f,
+                    uploaded_by=request.user,
+                    Output=True
+                )
+            return redirect('ticket_detail',ticket_id)
     else:
         form = TicketStatusForm(instance=ticket)
     return render(request, 'customer/ticket_update_status.html', {'form': form, 'ticket': ticket})

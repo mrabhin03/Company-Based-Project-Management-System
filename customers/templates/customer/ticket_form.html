@@ -17,7 +17,7 @@
 {% if ticket %}
     <h4>Existing Attachments:</h4>
     <ul>
-        {% for attachment in ticket.attachments.all %}
+        {% for attachment in attachment %}
             <li>
                 <a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a>
                 <a href="{% url 'delete_ticket_attachment' attachment.id %}">[Delete]</a>

@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Task # Import Task model
 
 class AssignedEmployeeInline(admin.TabularInline):
-    model = Task.assigned_employees.through
+    model = Task
     extra = 1
 
 @admin.register(Task)
@@ -39,10 +39,6 @@ class TaskAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('ticket', 'title', 'description', 'parent_task', 'status', 'deadline')
-        }),
-        ('Assignment Details', {
-            'fields': ('assigned_department', 'assigned_employees'),
-            'description': 'Select the department and specific employees responsible for this task.',
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

@@ -4,13 +4,13 @@ from django.contrib.auth import get_user_model, login as auth_login, logout as a
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from .forms import CustomUserForm, EmployeeProfileForm, CustomLoginForm,UserFormEdit
-from .models import EmployeeProfile, Payroll
+from .models import EmployeeProfile, Payroll,CustomUser
 from .forms import PayrollForm,PayrollFilterForm,DepFilterForm,ChangePassword,EmpSelfEdit1,EmpSelfEdit2
 from company.models import Department
 from django.db.models import Max
 from datetime import date
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta,datetime
 from tasks.models import Task
 from customers.models import TicketFeedback,Ticket
 from django.db.models import Q, Avg
@@ -60,9 +60,9 @@ def dashboard(request):
 
         # Tickets
         total_tickets = Ticket.objects.count()
-        pending_tickets = Ticket.objects.filter(status='PENDING').count()
-        in_progress_tickets = Ticket.objects.filter(status='IN_PROGRESS').count()
-        completed_tickets = Ticket.objects.filter(status='RESOLVED').count()
+        pending_tickets = Ticket.objects.filter(status='Pending').count()
+        in_progress_tickets = Ticket.objects.filter(status='In Progress').count()
+        completed_tickets = Ticket.objects.filter(status='Resolved').count()
 
         ticket_progress = {
             'pending': pending_tickets,
@@ -227,9 +227,90 @@ def payroll_edit(request, payroll_id):
     return render(request, 'users/payroll_edit.html', {'form': form, 'employee': payroll.employee})
 
 
+def getBonus(emp, month, year):
+    bonus = 0
+    deduction = 0 
+
+    start_date = timezone.make_aware(datetime(year, month, 1))
+    if month == 12:
+        end_date = timezone.make_aware(datetime(year + 1, 1, 1)) - timedelta(seconds=1)
+    else:
+        end_date = timezone.make_aware(datetime(year, month + 1, 1)) - timedelta(seconds=1)
+
+    today = date.today()
+
+    if emp.user.role == "EMPLOYEE":
+        taskDetails = Task.objects.filter(
+            assigned_to=emp,
+            created_at__gte=start_date,
+            created_at__lte=end_date
+        )
+        
+        for task in taskDetails:
+            if task.status == "Completed":
+                bonus += 500
+            elif task.status in ["Assigned", "In Progress", "Submitted", "Needs Revision", "Approved"]:
+                bonus += 50
+            
+            if task.status != "Completed" and task.deadline < today:
+                deduction += 50  
+
+    elif emp.user.role == "MANAGER":
+        dept_emps = EmployeeProfile.objects.filter(department=emp.department)
+        taskDetails = Task.objects.filter(
+            assigned_to__in=dept_emps,
+            created_at__gte=start_date,
+            created_at__lte=end_date
+        )
+
+        for task in taskDetails:
+            if task.status == "Completed":
+                bonus += 1000
+            elif task.status in ["Assigned", "In Progress", "Submitted", "Needs Revision", "Approved"]:
+                bonus += 100
+        
+            if task.status != "Completed" and task.deadline < today:
+                deduction += 100 
+        taskDetails = Task.objects.filter(
+            assigned_to=emp,
+            created_at__gte=start_date,
+            created_at__lte=end_date
+        )
+        
+        for task in taskDetails:
+            if task.status == "Completed":
+                bonus += 500
+            elif task.status in ["Assigned", "In Progress", "Submitted", "Needs Revision", "Approved"]:
+                bonus += 50
+            
+            if task.status != "Completed" and task.deadline < today:
+                deduction += 50  
+    return [bonus,deduction]
+
+def generateSalary(month, year):
+    join_date = date(year, month, 1)
+    employee = EmployeeProfile.objects.filter(date_of_joining__lt=join_date)
+    for emp in (employee):
+        Pays=Payroll.objects.filter(employee=emp, month=join_date).first()
+        Special = getBonus(emp, month, year)
+        bonus=Special[0]
+        deduction=Special[1]
+        if Pays:
+            Pays.base_salary=emp.salary
+            Pays.bonuses=bonus
+            Pays.deductions=deduction
+            Pays.save()
+        else:
+            Payroll.objects.create(
+                employee=emp,
+                month=join_date,
+                base_salary=emp.salary,
+                bonuses=bonus,
+                deductions=deduction
+            )
+            pass
 def payroll_list_all(request):
     latest = Payroll.objects.aggregate(latest_month=Max('month'))['latest_month']
-
     if request.GET:
         form = PayrollFilterForm(request.GET)
         if form.is_valid():
@@ -238,6 +319,9 @@ def payroll_list_all(request):
         else:
             month = latest.month if latest else 1
             year = latest.year if latest else date.today().year
+        if 'Genarate' in request.GET:
+            generateSalary(month,year)
+            return redirect(f"{reverse('payroll_list_all')}?month={month}&year={year}")
     else:
         form = PayrollFilterForm(initial={
             'month': latest.month if latest else date.today().month,
