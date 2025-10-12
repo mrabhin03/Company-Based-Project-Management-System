@@ -24,7 +24,7 @@
         <td>{{ forloop.counter }}</td>
         <td>{{ ticket.subject }}</td>
         <td>{{ ticket.status }}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">{% if ticket.Notification == 0 %}None{% else %}{{ ticket.Notification }}{% endif %}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">{% if ticket.Notification == 0 %}No Notifications{% else %}{{ ticket.Notification }}{% endif %}</td>
         <td>
             <a href="{% url 'Client_ticket_detail' ticket.id %}">View Details</a>
             

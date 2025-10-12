@@ -54,6 +54,7 @@ class TicketAttachment(models.Model):
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
     )
+    Output=models.BooleanField(default=False)
 
     def __str__(self):
         return self.file.name
