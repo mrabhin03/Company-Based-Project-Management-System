@@ -20,6 +20,7 @@ STATUS_CHOICES = [
     ('Resolved', 'Resolved'),
     ('Finishing', 'Finishing'),
     ('Closed', 'Closed'),
+    ('Canceled','Canceled')
 ]
 
 class Ticket(models.Model):

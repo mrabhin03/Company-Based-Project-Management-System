@@ -279,13 +279,11 @@ def getAllChildren(task):
     children = [task]
 
     def _get_children(t):
-        print(t)
         for child in t.subtasks.all():
             children.append(child)
             _get_children(child) 
 
     _get_children(task)
-    print(children)
     return children
 
 @login_required

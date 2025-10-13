@@ -52,10 +52,10 @@
     </tr>
 </table>
 
-{% if ticket.status != 'Resolved' %}
+{% if ticket.status not in 'Resolved Closed In Progress' %}
 <a style="background-color: #2878a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_edit' ticket.id %}">Edit</a>
-{% else %}
+{% elif ticket.status in 'Resolved Closed' %}
 <a style="background-color: #28a78e; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_feedback' ticket.id %}">Send Feedback</a>
 {% endif %}
