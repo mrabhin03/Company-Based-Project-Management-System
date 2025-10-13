@@ -30,4 +30,9 @@ urlpatterns = [
     path('profile/edit/', views.customer_edit, name='customer_edit'),
     path('profile/change-password/', views.customer_change_password, name='customer_change_password'),
     
+
+    path('bug-reports/delete/<int:bug_id>/', views.delete_bug, name='delete_bug'),
+    path('bug-reports/new/', views.bug_report_create, name='bug_report_create'),
+    path('bug-reports/new/<int:ticket_id>/', views.bug_report_create, name='bug_report_create_with_ticket'),
+    path('bug-reports/update-status/<int:bug_id>/', views.update_bug_status, name='update_bug_status'),
 ]

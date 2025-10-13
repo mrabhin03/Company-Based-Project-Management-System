@@ -60,3 +60,26 @@ class TicketAttachment(models.Model):
 
     def __str__(self):
         return self.file.name
+    
+
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class BugReport(models.Model):
+    STATUS_CHOICES = [
+        ('Open', 'Open'),
+        ('Resolved', 'Resolved'),
+        ('Closed', 'Closed'),
+    ]
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bug_reports')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
+    related_ticket = models.ForeignKey('customers.Ticket', on_delete=models.SET_NULL, null=True, blank=True, help_text="Reference to a resolved ticket (if any)")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.status})"

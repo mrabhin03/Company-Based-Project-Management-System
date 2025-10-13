@@ -61,7 +61,15 @@
 {% endif %}
 <a style="background-color: #2861a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'customer_reply' ticket.id %}">Message {% if ticket.notification != 0 %} <span class="notify">{{ticket.notification}}</span>{% endif %}</a>
+{% if ticket.status == 'Resolved' %}
+  <a style="background-color: #a72828; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;margin-left: 5px;" href="{% url 'bug_report_create_with_ticket' ticket.id %}">Raise Problem</a>
+{% endif %}
 
+
+
+
+<div style="display: flex;flex-direction: column;">
 
 {% if Outputs %}
 <h3>Outputs:</h3>
@@ -93,6 +101,50 @@
 </table>
 {% endif %}
 
+{% if bugs %}
+<h3 style="color: red;">Bug:</h3>
+<table class="bugTable">
+    <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Problem</th>
+        <th style="width: fit-content;text-align: center;">Status</th>
+        <th style="width: fit-content;text-align: center;">Created Date</th>
+        <th style="width: fit-content;text-align: center;">Action</th>
+    </tr>
+    {% for bug in bugs %}
+    <tr>
+        <td  style="width: fit-content;">
+            B{{ forloop.counter }}
+        </td>
+        <td style="width: fit-content;">
+            {{bug.title}}
+        </td>
+        <td  style="width: fit-content;">
+            {{ bug.description }}
+        </td>
+        <td  style="width: fit-content;text-align: center;" >
+            <p class="fixed">{{ bug.status }}</p>
+        </td>
+        <td style="width: fit-content;text-align: center;">
+            {{bug.created_at}}
+        </td>
+        <td style="width: fit-content;text-align: center;">
+            {% if bug.status in 'Open' %}
+            <form action="{% url 'delete_bug' bug.id %}" method="GET" onsubmit="return confirm('Are you sure u want to delete it?')">
+                <button type="submit" >Delete</button>
+            </form>
+            {% else %}
+            No actions available
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+        <tr>No bugs.</tr>
+    {% endfor %}
+</table>
+{% endif %}
+
 
 <h3>Attachments:</h3>
 <ul>
@@ -104,4 +156,5 @@
     {% endfor %}
 </ul>
 <br>
+</div>
 {% endblock %}

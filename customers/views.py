@@ -2,9 +2,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from .forms import CustomerRegistrationForm, CustomerLoginForm, TicketForm
-from .models import Ticket, Customer,TicketFeedback,TicketResponse,TicketAttachment
+from .models import Ticket, Customer,TicketFeedback,TicketResponse,TicketAttachment,BugReport
 from users.decorators import is_admin, is_manager,admin_required,is_admin_or_manager
-from .forms import TicketStatusForm,TicketAttachmentForm,CustomerForm
+from .forms import TicketStatusForm,TicketAttachmentForm,CustomerForm,BugReportForm,BugReportStatusForm
 from tasks.models import Task
 from users.models import EmployeeProfile
 from company.models import Department
@@ -12,7 +12,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 CustomUser = get_user_model()
-
 def is_customer(user):
     return user.is_authenticated and user.role == CustomUser.ROLE_CUSTOMER
 def customer_register(request):
@@ -95,7 +94,6 @@ def ticket_edit(request, ticket_id):
         form = TicketForm(request.POST, instance=ticket)
         if form.is_valid():
             form.save()
-            # Save new files (add, don't replace)
             for f in request.FILES.getlist('file'):
                 TicketAttachment.objects.create(
                     ticket=ticket,
@@ -129,7 +127,9 @@ def ticket_detail(request, ticket_id):
     ).count()
     ticket.notification=responses_count
     tasksdetails=Task.objects.filter(ticket=ticket,parent_task=None)
-    return render(request, 'customer/ticket_detail.html', {'ticket': ticket, 'attachments': attachments,"tasksdetails":tasksdetails,"Outputs":Outputs})
+    bugs=BugReport.objects.filter(related_ticket=ticket).order_by('-created_at')
+    bugsSt=BugReport.objects.filter(related_ticket=ticket).exclude(status="Closed").count()
+    return render(request, 'customer/ticket_detail.html', {'ticket': ticket, 'attachments': attachments,"tasksdetails":tasksdetails,"Outputs":Outputs,"bugs":bugs,"bugsSt":bugsSt})
 
 def Client_ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -140,7 +140,8 @@ def Client_ticket_detail(request, ticket_id):
         status=False
     ).count()
     ticket.notification=responses_count
-    return render(request, 'customer/Clients_ticketView.html', {'ticket': ticket, 'attachments': attachments,"Outputs":Outputs})
+    bugs=BugReport.objects.filter(related_ticket=ticket).order_by('-created_at')
+    return render(request, 'customer/Clients_ticketView.html', {'ticket': ticket, 'attachments': attachments,"Outputs":Outputs,"bugs":bugs})
 def getTicketDetails(ticket):
     total=0
     pending=0
@@ -343,3 +344,50 @@ def customer_change_password(request):
 def customer_profile(request):
     customer = request.user.customer
     return render(request, 'customer/customer_profile.html', {'customer': customer})
+
+
+
+
+@login_required
+def bug_report_list(request):
+    bug_reports = BugReport.objects.filter(reporter=request.user).order_by('-created_at')
+    return render(request, 'customer/bug_report_list.html', {'bug_reports': bug_reports})
+
+@login_required
+def bug_report_create(request, ticket_id=None):
+    ticket = None
+    if ticket_id:
+        ticket = get_object_or_404(Ticket, id=ticket_id)
+    if request.method == 'POST':
+        form = BugReportForm(request.POST)
+        if form.is_valid():
+            bug_report = form.save(commit=False)
+            bug_report.reporter = request.user
+            if ticket:
+                bug_report.related_ticket = ticket
+            bug_report.save()
+            return redirect('Client_ticket_detail',ticket_id)
+    else:
+        form = BugReportForm()
+    return render(request, 'customer/bug_report_form.html', {'form': form, 'ticket': ticket})
+
+@login_required
+def delete_bug(request, bug_id):
+    bug = get_object_or_404(BugReport, id=bug_id)
+    ticket_id=bug.related_ticket.id
+    if request.method == "GET":
+        bug.delete()
+        pass
+    return redirect('Client_ticket_detail',ticket_id)
+
+@login_required
+def update_bug_status(request, bug_id):
+    bug = get_object_or_404(BugReport, id=bug_id)
+    if request.method == 'POST':
+        form = BugReportStatusForm(request.POST, instance=bug)
+        if form.is_valid():
+            form.save()
+            return redirect('ticket_detail',request.POST.get("TicketID"))
+    else:
+        form = BugReportStatusForm(instance=bug)
+    return render(request, 'customer/bug_report_status_form.html', {'form': form, 'bug': bug})

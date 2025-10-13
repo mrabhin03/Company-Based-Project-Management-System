@@ -45,3 +45,16 @@ class TicketAttachmentForm(forms.ModelForm):
     class Meta:
         model = TicketAttachment
         fields = ['file']
+
+from django import forms
+from .models import BugReport
+
+class BugReportForm(forms.ModelForm):
+    class Meta:
+        model = BugReport
+        fields = ['title', 'description']
+
+class BugReportStatusForm(forms.ModelForm):
+    class Meta:
+        model = BugReport
+        fields = ['status']

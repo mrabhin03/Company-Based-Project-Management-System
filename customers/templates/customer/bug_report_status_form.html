@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Update Bug Status for "{{ bug.title }}"</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="TicketID" value="{{bug.related_ticket.id}}">
+    <button type="submit">Update Status</button>
+    <a href="{% url 'ticket_detail' bug.related_ticket.id %}">Cancel</a>
+  </form>
+{% endblock %}

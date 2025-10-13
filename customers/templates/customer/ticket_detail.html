@@ -68,6 +68,49 @@
         padding: 8px; text-align: left; border-bottom: 1px solid #ddd;
     }
 </style>
+<div style="display: flex;flex-direction: column;">
+
+{% if bugs %}
+<div style="order: {% if bugsSt == 0 %}5{% else %}0{% endif %};">
+<h3 style="color: red;">Bug:</h3>
+<table class="bugTable">
+    <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Problem</th>
+        <th style="width: fit-content;text-align: center;">Status</th>
+        <th style="width: fit-content;text-align: center;">Created Date</th>
+        <th style="width: fit-content;text-align: center;">Action</th>
+    </tr>
+    {% for bug in bugs %}
+    <tr>
+        <td  style="width: fit-content;">
+            B{{ forloop.counter }}
+        </td>
+        <td style="width: fit-content;">
+            {{bug.title}}
+        </td>
+        <td  style="width: fit-content;">
+            {{ bug.description }}
+        </td>
+        <td  style="width: fit-content;text-align: center;" >
+            <p class="fixed">{{ bug.status }}</p>
+        </td>
+        <td style="width: fit-content;text-align: center;">
+            {{bug.created_at}}
+        </td>
+        <td style="width: fit-content;text-align: center;">
+                <a href="{% url 'update_bug_status' bug.id %}"><button type="submit" >Update Status</button></a>
+        </td>
+    </tr>
+    {% empty %}
+        <tr>No bugs.</tr>
+    {% endfor %}
+</table>
+</div>
+{% endif %}
+
+
 {% if Outputs %}
 <hr>
 <h3>Outputs:</h3>
@@ -142,4 +185,5 @@
     {% endfor %}
 </ul>
 <br>
+</div>
 {% endblock %}
