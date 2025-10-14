@@ -230,6 +230,21 @@ aside ul li a:hover, aside ul li a:focus {
     padding-left: 16px;
     outline: none;
 }
+aside ul li .active{
+    animation: coloron .6s ease-in-out forwards;
+    background: linear-gradient(90deg, #1341a2 80%, #3883df 100%);
+    color: #fff;
+    padding-left: 16px;
+    outline: none;
+}
+@keyframes coloron {
+    0%{
+        opacity: .5;
+    }
+    100%{
+        opacity: 1;
+    }
+}
 
 /* === Cards / Containers === */
 .card, .container {
@@ -358,60 +373,75 @@ a{
         <aside style="width: 220px; background: #f2f2f2; padding: 20px;box-sizing: content-box;">
     <h3>{% if request.user.role in 'ADMIN HR' %}Admin Panel{% elif request.user.role == 'MANAGER' %}Manager Panel{% elif request.user.role == 'EMPLOYEE' %}Employee Panel{% else %}Welcome{%endif%}</h3>
     <ul style="list-style: none; padding-left: 0;" class="MainUl">
-        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'dashboard' %}" class="nav-btn" data-btn="page1">Dashboard</a></li>
     {% if request.user.role in 'ADMIN HR' %}
-        <li><a href="{% url 'task_list_admin' %}">Tasks</a></li>
-        <li><a href="{% url 'ticket_list_admin' %}">Tickets {% if request.user.PendingTickets and request.user.PendingTickets != 0%}<p class="pending_icon">{{ request.user.PendingTickets }}</p>{%endif %}</a></li>
+        <li><a href="{% url 'task_list_admin' %}" class="nav-btn" data-btn="page2">Tasks</a></li>
+        <li><a href="{% url 'ticket_list_admin' %}" class="nav-btn" data-btn="page3">Tickets {% if request.user.PendingTickets and request.user.PendingTickets != 0%}<p class="pending_icon">{{ request.user.PendingTickets }}</p>{%endif %}</a></li>
         <ul style="background-color: #0000000f;border-radius: 10px;list-style: none;margin-bottom: 5px;padding: 10px;">
-            <b style="font-size: 13px;"> Employee Options</b>
-            <li><a href="{% url 'employee_list' %}">> Employees</a></li>
-            <li><a href="{% url 'benefit_list' %}">> Benefits</a></li>
-            <li><a href="{% url 'payroll_list_all' %}">> Payroll</a></li>
-            <li><a href="{% url 'performance_overview' %}">> Reports</a></li>
+            <b style="font-size: 13px;" > Employee Options</b>
+            <li><a href="{% url 'employee_list' %}" class="nav-btn"  data-btn="page4">> Employees</a></li>
+            <li><a href="{% url 'benefit_list' %}" class="nav-btn"  data-btn="page5">> Benefits</a></li>
+            <li><a href="{% url 'payroll_list_all' %}" class="nav-btn" data-btn="page6">> Payroll</a></li>
+            <li><a href="{% url 'performance_overview' %}" class="nav-btn" data-btn="page7">> Reports</a></li>
         </ul>
         
         <ul style="background-color: #0000000f;border-radius: 10px;list-style: none;margin-bottom: 5px;padding: 10px;">
-            <b style="font-size: 13px;"> Department Options</b>
-            <li><a href="{% url 'department_list' %}">> Departments</a></li>
-            <li><a href="{% url 'position_list' %}">> Positions</a></li>
-            <li><a href="{% url 'department_performance' %}">> Dept Performance</a></li>
+            <b style="font-size: 13px;" > Department Options</b>
+            <li><a href="{% url 'department_list' %}"  class="nav-btn" data-btn="page8">> Departments</a></li>
+            <li><a href="{% url 'position_list' %}" class="nav-btn" data-btn="page9">> Positions</a></li>
+            <li><a href="{% url 'department_performance' %}" class="nav-btn" data-btn="page10">> Dept Performance</a></li>
         </ul>
         
-        <li><a href="{% url 'feedback_list' %}">Feedbacks</a></li>
+        <li><a href="{% url 'feedback_list' %}" class="nav-btn" data-btn="page11">Feedbacks</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
     {% elif request.user.role == 'MANAGER' %}
         <ul style="background-color: #0000000f;border-radius: 10px;list-style: none;margin-bottom: 5px;padding: 10px;">
            <b> For Me</b>
-            <li><a href="{% url 'task_list_employee' %}">> My Tasks {% if request.user.PendingTasks and request.user.PendingTasks != 0%}<p class="pending_icon">{{ request.user.PendingTasks }}</p>{%endif %}</a></li>
-            <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}">> My Profile </a></li>
+            <li><a href="{% url 'task_list_employee' %}" class="nav-btn" data-btn="page12">> My Tasks {% if request.user.PendingTasks and request.user.PendingTasks != 0%}<p class="pending_icon">{{ request.user.PendingTasks }}</p>{%endif %}</a></li>
+            <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page13">> My Profile </a></li>
         </ul>
         <ul style="background-color: #0000000f;border-radius: 10px;list-style: none;margin-bottom: 5px;padding: 10px;">
             <b>Tasks</b>
-            <li><a href="{% url 'task_list_manager' %}">> Department {% if request.user.DepartmentTask and request.user.DepartmentTask != 0%}<p class="pending_icon">{{ request.user.DepartmentTask }}</p>{%endif %}</a></li>
-            <li><a href="{% url 'emp_task_list_manager' %}">> Employee </a></li>
+            <li><a href="{% url 'task_list_manager' %}" class="nav-btn" data-btn="page14">> Department {% if request.user.DepartmentTask and request.user.DepartmentTask != 0%}<p class="pending_icon">{{ request.user.DepartmentTask }}</p>{%endif %}</a></li>
+            <li><a href="{% url 'emp_task_list_manager' %}" class="nav-btn" data-btn="page15">> Employee </a></li>
         </ul>
-        <li><a href="{% url 'employee_list' %}">Team Details</a></li>
-        <li><a href="{% url 'performance_overview' %}">Reports</a></li>
+        <li><a href="{% url 'employee_list' %}" class="nav-btn" data-btn="page16">Team Details</a></li>
+        <li><a href="{% url 'performance_overview' %}" class="nav-btn" data-btn="page17">Reports</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
     {% elif request.user.role == 'EMPLOYEE' %}
         <li><a href="{% url 'task_list_employee' %}">My Tasks {% if request.user.PendingTasks and request.user.PendingTasks != 0%}<p class="pending_icon">{{ request.user.PendingTasks }}</p>{%endif %}</a></li>
-        <li><a href="{% url 'payroll_list' request.user.employeeprofile.id %}">My Payroll</a></li>
-        <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}">My Profile </a></li>
+        <li><a href="{% url 'payroll_list' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page18">My Payroll</a></li>
+        <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page19">My Profile </a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
     {% else %}
-        <li><a href="{% url 'customer_profile' %}">My Profile</a></li>
+        <li><a href="{% url 'customer_profile' %}" class="nav-btn" data-btn="page20">My Profile</a></li>
         <li><a href="{% url 'customer_logout' %}">Logout</a></li>
     {% endif %}
 </ul>
 
 </aside>
-
-
         <!-- Main Content -->
         <main style="flex: 1; padding: 20px;">
             {% block content %}
             {% endblock %}
         </main>
     </div>
+    <script>
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            localStorage.setItem('activeButton', btn.dataset.btn);
+        });
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+        const active = localStorage.getItem('activeButton');
+        console.log(active)
+        if (active) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.btn === active);
+            });
+        }
+        });
+    </script>
 </body>
 </html>
