@@ -3,7 +3,7 @@
 {% block title %}Assign Task{% endblock %}
 
 {% block content %}
-<a href="javascript:history.back()" 
+<a href="{% url 'task_detail' parent_task.id %}" 
     style="background-color: #007bff; color: white; padding: 8px 15px; 
             text-decoration: none; border-radius: 6px; font-size: 14px;">
     ← Back

@@ -48,7 +48,6 @@ def user_logout(request):
     return redirect('login')
 def getAllChildren(dept):
     children = [dept]
-
     def _get_children(t):
         for child in t.sub_departments.all():
             children.append(child)
@@ -99,10 +98,21 @@ def dashboard(request):
 
     elif user.role == 'EMPLOYEE':
         employee_profile = EmployeeProfile.objects.get(user=user)
-        payrolls = employee_profile.payrolls.all()
+        payrolls = employee_profile.payrolls.order_by("-month").all()
+
+        total_tasks = Task.objects.filter(assigned_to=employee_profile).count()
+        completed_tasks = Task.objects.filter(status='Completed',assigned_to=employee_profile).count()
+        pending_tasks = total_tasks-completed_tasks
+        task_progress = {
+            'pending': pending_tasks,
+            'completed': completed_tasks,
+            'total': total_tasks,
+            'completed_percent': int((completed_tasks/total_tasks)*100) if total_tasks else 0,
+        }
         context.update({
             'employee_profile': employee_profile,
             'payrolls': payrolls,
+            'task_progress': task_progress,
         })
         return render(request, 'users/dashboard_employee.html', context)
 
@@ -133,22 +143,42 @@ def dashboard(request):
     else:
         return redirect("customer_dashboard")
 
-
+EmpSort={
+    'Name':"user__name",
+    'Role':"user__role",
+    'Position':'position',
+    'Department':'department'
+}
 @user_passes_test(lambda u: u.is_authenticated and u.role in [User.ROLE_ADMIN, User.ROLE_MANAGER])
 def employee_list(request):
+    sortOP="Name"
+    if request.GET.get('SortBy'):
+        sortOP=request.GET.get('SortBy')
+        if sortOP not in EmpSort:
+            sortOP="Name"
+    theSort=EmpSort[sortOP]
+    DepFilter=0
     depSelector=DepFilterForm()
-    if request.user.role == 'MANAGER':
-        profiles = EmployeeProfile.objects.filter(department=request.user.employeeprofile.department) 
-    else:
-        if request.method == 'GET' and request.GET.get('department') and int(request.GET.get('department'))!=0:
-            DepFilter = request.GET.get('department')
-            department_queryset = Department.objects.filter(pk=DepFilter)
-            first_department = department_queryset.first()
-            profiles = EmployeeProfile.objects.filter(department=first_department).all()
-            depSelector = DepFilterForm(initial={'department': DepFilter})
+
+    if request.method == 'GET' and request.GET.get('department') and int(request.GET.get('department'))!=0:
+        DepFilter = request.GET.get('department')
+        department_queryset = Department.objects.filter(pk=DepFilter)
+        first_department = department_queryset.first()
+        if request.user.role == 'MANAGER':
+            childDept=getAllChildren(request.user.employeeprofile.department)
+            depSelector=DepFilterForm(departments=childDept,initial={'department': DepFilter})
+            profiles = EmployeeProfile.objects.filter(department__in=childDept,department=first_department).exclude(user=request.user).order_by(theSort)
         else:
-            profiles = EmployeeProfile.objects.select_related('user').all()
-    return render(request, 'users/employee_list.html', {'profiles': profiles,'Dep':depSelector})
+            profiles = EmployeeProfile.objects.filter(department=first_department).all().order_by(theSort)
+            depSelector = DepFilterForm(initial={'department': DepFilter})
+    else:
+        if request.user.role == 'MANAGER':
+            childDept=getAllChildren(request.user.employeeprofile.department)
+            depSelector=DepFilterForm(departments=childDept,initial={'department': DepFilter})
+            profiles = EmployeeProfile.objects.filter(department__in=childDept).exclude(user=request.user).order_by(theSort)
+        else:
+            profiles = EmployeeProfile.objects.select_related('user').all().order_by(theSort)
+    return render(request, 'users/employee_list.html', {'profiles': profiles,'Dep':depSelector,'DepFilter':DepFilter,'sortOP':sortOP})
 
 
 # Register employee (admin + manager)

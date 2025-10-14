@@ -87,10 +87,13 @@ class DepFilterForm(forms.Form):
     department = forms.ChoiceField(choices=[],widget=forms.Select(attrs={'onchange': 'this.form.submit();'})) 
     
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, departments=None, **kwargs):
         super().__init__(*args, **kwargs)
-        departments = Department.objects.all()
-        DEPT_CHOICES = [(d.pk, d.name) for d in departments]
 
-        DEPT_CHOICES.insert(0, ('0', 'All Departments')) 
-        self.fields['department'].choices = DEPT_CHOICES
+        if departments is None:
+            departments = Department.objects.all()
+
+        dept_choices = [(str(d.pk), d.name) for d in departments]
+        dept_choices.insert(0, ('0', 'All Departments'))
+
+        self.fields['department'].choices = dept_choices

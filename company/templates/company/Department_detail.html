@@ -16,17 +16,32 @@
         </a>
     </div>
 
+    
     <!-- Department Details -->
     <h2 style="margin-bottom: 5px;">{{ department.name }}</h2>
-    <p><strong>Description:</strong> {{ department.description }}</p>
-    <p><strong>Manager:</strong> {% if department.manager %} {{ department.manager.name }}{% else %}Not set{%endif%}</p>
-    <p><strong>Created at:</strong> {{ department.created_at|date:"M d, Y H:i" }}</p>
+    <table >
+    <tr>
+        <th>Description</th>
+        <td>{{ department.description }}</td>
+    </tr>
+    <tr>
+        <th>Manager</th>
+        <td>{% if department.manager %} {{ department.manager.name }}{% else %}Not set{%endif%}</td>
+    </tr>
+    <tr>
+        <th>Created at</th>
+        <td>{{ department.created_at|date:"M d, Y H:i" }}</td>
+    </tr>
+    
+    </table>
+    <div style="display: flex;gap: 5px;">
     <a style="background-color: #7f0505; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"
                   href="{% url 'department_edit' department.id %}" style="text-decoration: none;">Edit</a>
     <a style="background-color: #094773; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"
                   href="{% url 'department_performance_detail' department.id %}" style="text-decoration: none;">View Performance</a>
+    </div>
 
     <hr>
 
@@ -70,6 +85,7 @@
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Position</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Role</th>
             <th style="padding: 8px; text-align: center; border-bottom: 1px solid #ddd;">Actions</th>
         </tr>
         </thead>
@@ -79,6 +95,7 @@
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ emp.user.name }}</td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ emp.position }}</td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ emp.user.role }}</td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">
                     <a href="{% url 'view_profile' profile_id=emp.id %}">View</a>
                 </td>

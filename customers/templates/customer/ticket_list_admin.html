@@ -9,6 +9,9 @@
         padding: 8px; text-align: left; border-bottom: 1px solid #ddd;
     }
 </style>
+<form method="get">
+    {{ form.as_p }}
+</form>
 {% if tickets %}
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
@@ -18,8 +21,7 @@
             <th>Title</th>
             <th>Status</th>
             <th style="text-align: center;">Notifications</th>
-            <th style="text-align: center;">Total Tasks</th>
-            <th style="text-align: center;">Pending Tasks</th>
+            <th style="text-align: center;">Completed Tasks</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -27,12 +29,11 @@
         {% for ticket in tickets %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ ticket.customer.user.name }}</td>
-            <td>{{ ticket.subject }}</td>
-            <td>{{ ticket.status }}</td>
+            <td style="max-width: 150px;">{{ ticket.customer.user.name }}</td>
+            <td style="max-width: 200px;">{{ ticket.subject }}</td>
+            <td {% if ticket.status == 'Canceled'%} style="color: red;"{% endif%}>{{ ticket.status }}</td>
             <td style="text-align: center;">{% if ticket.Notification == 0 %}---{% else %}{{ ticket.Notification }}{% endif %}</td>
-            <td style="text-align: center;">{{ ticket.total }}</td>
-            <td style="text-align: center;">{{ ticket.pending }}</td>
+            <td style="text-align: center;">{% if ticket.total != 0 %}{{ ticket.Complete }}/{{ ticket.total }}{%else%}No tasks{%endif%}</td>
             <td style="text-align: center;">
                 <a href="{% url 'ticket_detail' ticket.id %}">View details</a>
             </td>

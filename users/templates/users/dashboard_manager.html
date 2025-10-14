@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% block title %}Manager Panel{% endblock %}
 <h2>Manager Dashboard</h2>
 <p>Welcome, {{ request.user.username }} ({{ request.user.role }})</p>
 
@@ -13,8 +14,8 @@
 
     <!-- Departments Card -->
     <div style="flex: 1 1 250px; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
-        <h3>Departments</h3>
-        <p>Total Departments: <strong>{{ total_departments }}</strong></p>
+        <h3>Sub Departments</h3>
+        <p>Total Sub Departments: <strong>{{ total_departments }}</strong></p>
     </div>
 
     <!-- Tasks Card -->

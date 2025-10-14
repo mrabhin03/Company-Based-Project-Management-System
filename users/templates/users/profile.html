@@ -20,7 +20,9 @@
     <p><strong>Salary:</strong> {{ profile.salary }}</p>
     <p><strong>Skills:</strong> {{ profile.skills }}</p>
     <a href="{% url 'edit_employee' profile_id=profile.id %}"><button>Edit</button></a>
+    {% if request.user.role in 'ADMIN HR' or  profile.id == request.user.employeeprofile.id %}
     <a href="{% url 'change_password' profile_id=profile.id %}"><button>Change Password</button></a>
+    {%endif%}
 </div>
 
 {% endblock %}

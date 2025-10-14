@@ -3,26 +3,34 @@
 {% block title %}Employee List{% endblock %}
 
 {% block content %}
+<style>
+    th a{
+        cursor: pointer;color: white !important;
+    }
+</style>
 <h2 style="margin-bottom: 20px;">Employees</h2>
-
+{% if user.role in 'ADMIN,HR' %}
 <a href="{% url 'employee_register' %}" 
    style="display: inline-block; margin-bottom: 15px; padding: 8px 12px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
    Register Employee
 </a>
-{% if user.role in 'ADMIN,HR' %}
+{% endif %}
 <form method="get" style="margin-bottom: 15px;">
     {{ Dep.as_p }}
+    {% if sortOP != 'Name' %}
+    <input type="hidden" name="SortBy" value="{{sortOP}}">
+    {%endif%}
 </form>
-{% endif %}
+
 {% if profiles %}
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr style="background-color: #f2f2f2;">
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Name</th>
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Role</th>
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Department</th>
-            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Position</th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;"><a href="{% url 'employee_list' %}?SortBy=Name{% if DepFilter != 0 %}&department={{DepFilter}}{%endif%}">Name</a></th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;"><a href="{% url 'employee_list' %}?SortBy=Role{% if DepFilter != 0 %}&department={{DepFilter}}{%endif%}">Role</a></th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;"><a href="{% url 'employee_list' %}?SortBy=Department{% if DepFilter != 0 %}&department={{DepFilter}}{%endif%}">Department</a></th>
+            <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;"><a href="{% url 'employee_list' %}?SortBy=Position{% if DepFilter != 0 %}&department={{DepFilter}}{%endif%}">Position</a></th>
             <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;text-align: center;" colspan="3">Actions</th>
         </tr>
     </thead>

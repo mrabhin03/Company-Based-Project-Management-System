@@ -38,7 +38,8 @@
 
 <h3>My Tickets</h3>
 <p>
-    <a href="{% url 'ticket_create' %}">Create Ticket</a> 
+    <a style="background-color: #035b8e; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_create' %}">+ Create Ticket</a> 
 </p>
 <table >
     <tr>
@@ -52,7 +53,7 @@
     {% for ticket in tickets %}
     <tr>
         <td>{{ forloop.counter }}</td>
-        <td>{{ ticket.subject }}</td>
+        <td style="max-width: 250px;">{{ ticket.subject }}</td>
         <td>{{ ticket.status }}</td>
         <td style="text-align: center;">{% if ticket.Notification == 0 %}No Notifications{% else %}{{ ticket.Notification }}{% endif %}</td>
         <td>

@@ -47,7 +47,7 @@ def department_view(request, dept_id):
     department = get_object_or_404(Department, id=dept_id)
     sub_departments = Department.objects.filter(parent=department)
     all_departments = [department] + get_all_sub_departments(department)
-    employees = EmployeeProfile.objects.filter(department__in=all_departments)
+    employees = EmployeeProfile.objects.filter(department__in=all_departments).order_by("user__name")
     positions=Position.objects.filter(department__in=all_departments)
     return render(request, 'company/Department_detail.html', {
         'department': department,

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% block title %}Admin Panel{% endblock %}
 <h2>Admin Dashboard</h2>
 <p>Welcome, {{ request.user.username }} ({{ request.user.role }})</p>
 

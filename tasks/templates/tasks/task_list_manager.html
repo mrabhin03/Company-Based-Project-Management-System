@@ -27,7 +27,7 @@
         {% for task in tasks %}
         <tr>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.title }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;max-width: 200px;">{{ task.title }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{% if task.assigned_department %}Dept: {{task.assigned_department.name}}{% else %}{{ task.assigned_to.user.name }}{% endif %}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.status }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.deadline|date:"Y-m-d" }}</td>

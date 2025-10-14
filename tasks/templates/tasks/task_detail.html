@@ -18,7 +18,7 @@
 </style>
 <h2>Task Details</h2>
 
-<table>
+<table class="StrTab">
     <tr>
         <th>Title</th>
         <td>{{ task.title }}</td>
@@ -54,7 +54,7 @@
     </tr>
     {% endif %}
 </table>
-<div style="display: flex;gap: 5px;">
+<div style="display: flex;gap: 5px;align-items:center">
 {% if task.created_by == request.user %}
 {% if task.parent_task %}
 <a style="background-color: #1876b4; color: white; padding: 8px 15px; 
@@ -80,11 +80,12 @@
 <button style="background-color: #a72828; color: white; padding: 8px 15px; 
 text-decoration: none; border-radius: 6px; font-size: 14px;">Delete</button>
 </form>
-</div>
+
 {% endif %}
+</div>
 {% if Outputs %}
-<h3>Outputs:</h3>
-<table>
+<h3 class="outputText">Outputs:</h3>
+<table class="Outputtb">
     <tr>
         <th>#</th>
         <th>File</th>
@@ -124,9 +125,9 @@ text-decoration: none; border-radius: 6px; font-size: 14px;">Delete</button>
 </table>
 {% endif %}
 
-<h3>Attachments:</h3>
+<h3 class="AttachmentsText">Attachments:</h3>
 {% if Attachs %}
-<table>
+<table class="AttachmentsTB">
     <tr>
         <th>#</th>
         <th>File</th>
@@ -171,7 +172,7 @@ text-decoration: none; border-radius: 6px; font-size: 14px;">Delete</button>
 
 {% if childTask %}
 <hr>
-<h3>Sub Tasks:</h3>
+<h3 >Sub Tasks:</h3>
 <table style="width: 100%; border-collapse: collapse;">
     <thead>
         <tr>

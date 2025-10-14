@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout, authenticate
 from .forms import CustomerRegistrationForm, CustomerLoginForm, TicketForm
 from .models import Ticket, Customer,TicketFeedback,TicketResponse,TicketAttachment,BugReport
 from users.decorators import is_admin, is_manager,admin_required,is_admin_or_manager
-from .forms import TicketStatusForm,TicketAttachmentForm,CustomerForm,BugReportForm,BugReportStatusForm
+from .forms import TicketStatusForm,TicketAttachmentForm,CustomerForm,BugReportForm,BugReportStatusForm,TicketStatusFilterForm
 from tasks.models import Task
 from users.models import EmployeeProfile
 from company.models import Department
@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 CustomUser = get_user_model()
+
 def is_customer(user):
     return user.is_authenticated and user.role == CustomUser.ROLE_CUSTOMER
 def customer_register(request):
@@ -100,7 +101,7 @@ def ticket_edit(request, ticket_id):
                     file=f,
                     uploaded_by=request.user
                 )
-            return redirect('customer_dashboard')
+            return redirect('Client_ticket_detail',ticket_id)
     else:
         form = TicketForm(instance=ticket)
     attachments = ticket.attachments.filter(Output=False)
@@ -153,17 +154,23 @@ def getTicketDetails(ticket):
     return [total,pending]
 
 def ticket_list_admin(request):
-    tickets = Ticket.objects.all()
+    status="All"
+    if request.GET.get("status") and request.GET.get("status")!="all":
+        status=request.GET.get("status")
+        tickets = Ticket.objects.filter(status=request.GET.get("status"))
+    else:
+        tickets = Ticket.objects.all()
     for tic in tickets:
         taskDetails=getTicketDetails(tic)
-        tic.total=taskDetails[0] if taskDetails[0]!=0 else "No Tasks"
-        tic.pending=taskDetails[1] if taskDetails[1]!=0 else "No Pending"
+        tic.total=taskDetails[0] 
+        tic.Complete=taskDetails[0]-taskDetails[1] 
         responses = tic.responses.filter(
             is_customer_reply=True,
             status=False
         ).count()
         tic.Notification=responses
-    return render(request, 'customer/ticket_list_admin.html', {'tickets': tickets})
+    form=TicketStatusFilterForm(initial={'status': status})
+    return render(request, 'customer/ticket_list_admin.html', {'tickets': tickets,"form":form})
 
 # @admin_required
 def ticket_update_status(request, ticket_id):

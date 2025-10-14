@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from company.models import Department, Position, Benefit
 
+
 class CustomUser(AbstractUser):
     ROLE_ADMIN = 'ADMIN'
     ROLE_MANAGER = 'MANAGER'
@@ -32,6 +33,17 @@ class CustomUser(AbstractUser):
         blank=True,
         help_text='Specific permissions for this user.'
     )
+    
+    def PendingTasks(self):
+        return self.employeeprofile.tasks.exclude(status="Completed").count()
+    def PendingTickets(self):
+        from customers.models import Ticket
+        return Ticket.objects.exclude(status__in=['Resolved','Canceled','Closed']).count()
+    
+    def DepartmentTask(self):
+        managed_departments = Department.objects.filter(manager=self)
+        from tasks.models import Task
+        return Task.objects.filter(assigned_department__in=managed_departments).exclude(status="Completed").count()
 
     def __str__(self):
         return f"{self.name} ({self.role})"

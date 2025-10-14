@@ -38,6 +38,18 @@ class TicketStatusForm(forms.ModelForm):
         model = Ticket
         fields = ['status']
 
+class TicketStatusFilterForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'onchange': 'this.form.submit();'})
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = [('all', 'All')] + list(self.fields['status'].choices)
+        self.fields['status'].choices = choices
+
 
 from .models import TicketAttachment
 

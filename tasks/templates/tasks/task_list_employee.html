@@ -11,7 +11,7 @@
         <tr>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">#</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
-            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
+            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Assigned By</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Deadline</th>
             <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Action</th>
@@ -22,7 +22,7 @@
         <tr>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.title }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.description }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.created_by }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.status }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ task.deadline }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">

@@ -33,7 +33,7 @@
         <tr>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ forloop.counter }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.name }}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.description }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;max-width: 500px;">{{ dept.description }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ dept.manager.name }}</td>
             <td style="padding: 8px; border-bottom: 1px solid #ddd;text-align: center;">
                 <a href="{% url 'department_view' dept.id %}" style="text-decoration: none;">View</a>
