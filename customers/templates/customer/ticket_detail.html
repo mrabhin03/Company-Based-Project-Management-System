@@ -53,15 +53,17 @@
         <td>{{ ticket.created_at }}</td>
     </tr>
 </table>
-{% if ticket.status != 'COMPLETED' %}
+<div style="display: flex; gap: 5px;">
+{% if ticket.status != 'Closed' and ticket.status != 'Canceled' %}
 <a style="background-color: #2878a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'ticket_assign' ticket.id %}">Assign new tasks</a>
+<a href="{% url 'ticket_update_status' ticket.id %}" style="order:4;background-color: #28a745; color: white; padding: 8px 15px; 
+text-decoration: none; border-radius: 6px; font-size: 14px;margin-left: 5px;">Send Output</a>
 {% endif %}
 <a style="background-color: #2861a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'ticket_response' ticket.id %}">Respond to client {% if ticket.notification != 0 %} <span class="notify">{{ticket.notification}}</span>{% endif %}</a>
-<a href="{% url 'ticket_update_status' ticket.id %}" style="background-color: #28a745; color: white; padding: 8px 15px; 
-                  text-decoration: none; border-radius: 6px; font-size: 14px;margin-left: 5px;">Send Output</a>
 
+</div>
 
 <style>
     .myTables th,.myTablestd{

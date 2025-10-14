@@ -54,6 +54,7 @@
     </tr>
     {% endif %}
 </table>
+<div style="display: flex;gap: 5px;">
 {% if task.created_by == request.user %}
 {% if task.parent_task %}
 <a style="background-color: #1876b4; color: white; padding: 8px 15px; 
@@ -74,8 +75,12 @@
 <a href="{% url 'task_update_status' task.id %}" style="background-color: #28a745; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;">Update Status/Upload Output</a>
 {% if task.created_by == request.user %}
-<a style="background-color: #a72828; color: white; padding: 8px 15px; 
-                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'task_decline' task.id %}?NextPath=ticket_detail">Delete</a>
+<form onclick="return confirm('Cancel this Task?')" action="{% url 'task_decline' task.id %}" method="GET">
+    <input type="hidden" name="NextPath"  value="ticket_detail">
+<button style="background-color: #a72828; color: white; padding: 8px 15px; 
+text-decoration: none; border-radius: 6px; font-size: 14px;">Delete</button>
+</form>
+</div>
 {% endif %}
 {% if Outputs %}
 <h3>Outputs:</h3>
@@ -104,11 +109,11 @@
         <td  style="width: fit-content;">
             
             {% if request.user.role == "ADMIN" or task.created_by == request.user or attachment.uploaded_by == request.user   or  attachment.uploaded_by.role == "EMPLOYEE" and request.user.role == "MANAGER"   %}
-                <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}">
+                <form method="post" style="display:inline;" action="{% url 'task_edit' task.id%}" onclick="return confirm('Delete this file?')">
                     {% csrf_token %}
                     <input type="hidden" name="toLocation" value="task_detail">
                     <input type="hidden" name="delete_attachment_id" value="{{ attachment.id }}">
-                    <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+                    <button type="submit" >Delete</button>
                 </form>
             {% endif %}
         </td>

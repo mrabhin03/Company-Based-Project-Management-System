@@ -46,7 +46,7 @@
         <th>Subject</th>
         <th>Status</th>
         <th style="text-align: center;">Notifications</th>
-        <th>Prograss</th>
+        <th>Progress</th>
         <th>Actions</th>
     </tr>
     {% for ticket in tickets %}
@@ -55,11 +55,16 @@
         <td>{{ ticket.subject }}</td>
         <td>{{ ticket.status }}</td>
         <td style="text-align: center;">{% if ticket.Notification == 0 %}No Notifications{% else %}{{ ticket.Notification }}{% endif %}</td>
-        <td><div class="Progess">
+        <td>
+            {% if  ticket.status != 'Canceled' %}
+            <div class="Progess">
             <span>{{ticket.per}}%</span>
-            <div class="bar" style="width: {{ticket.per}}%;background-color: rgba(6, 224, 6, 0.7{{ticket.per}});">
+            <div class="bar" style="width: {{ticket.per}}%;background-color: rgba(6, 224, 6, 0.7{{ticket.per}});"></div>
             </div>
-        </div></td>
+            {% else %}
+            <p style="color: red;">Progress Cancelled</p>
+            {% endif %}
+        </td>
         <td>
             <a href="{% url 'Client_ticket_detail' ticket.id %}">View Details</a>
         </td>

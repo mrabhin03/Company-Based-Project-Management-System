@@ -3,10 +3,23 @@
 {% block title %}Ticket Details{% endblock %}
 
 {% block content %}
-
+<div class="status {{ ticket.status }}">
 <style>
+    :root{
+        --Theme:#3b82f6;
+    }
+    /* .status.Canceled{
+        --Theme: red;
+    }
+    .status.Resolved{
+        --Theme: rgb(4, 185, 100);
+    }
+    .status.Closed{
+        --Theme: rgba(2, 215, 52, 0.929);
+    } */
     th{
         max-width:fit-content !important;
+        background-color: var(--Theme);
     }
     td{
         width: 100%;
@@ -26,10 +39,14 @@
         place-items: center;
         font-size: 10px;
     }
+    
+    
 </style>
 <h2>Ticket Details</h2>
-
-<table>
+{% if ticket.status  == 'Canceled'%}
+<p style="color: red;">This ticket is cancelled</p>
+{%endif%}
+<table class="project-De">
     <tr>
         <th>Project</th>
         <td>{{ ticket.subject }}</td>
@@ -40,7 +57,7 @@
     </tr>
     <tr>
         <th>Status</th>
-        <td>{{ ticket.status }}</td>
+        <td >{{ ticket.status }}</td>
     </tr>
     <tr>
         <th>Description</th>
@@ -52,56 +69,29 @@
     </tr>
 </table>
 
+{% if ticket.status  != 'Canceled'%}
+<div style="display: flex; gap: 5px;">
 {% if ticket.status not in 'Resolved Closed In Progress' %}
 <a style="background-color: #2878a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_edit' ticket.id %}">Edit</a>
+<a style="background-color: #a72828; color: white; padding: 8px 15px; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px;order:5" href="{% url 'ticket_update_status' ticket.id %}?ticket_id=9">Cancel Ticket</a>
 {% elif ticket.status in 'Resolved Closed' %}
 <a style="background-color: #28a78e; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'ticket_feedback' ticket.id %}">Send Feedback</a>
 {% endif %}
 <a style="background-color: #2861a7; color: white; padding: 8px 15px; 
                   text-decoration: none; border-radius: 6px; font-size: 14px;"href="{% url 'customer_reply' ticket.id %}">Message {% if ticket.notification != 0 %} <span class="notify">{{ticket.notification}}</span>{% endif %}</a>
-{% if ticket.status == 'Resolved' %}
+{% if ticket.status == 'Resolved' or  ticket.status == 'Closed'%}
   <a style="background-color: #a72828; color: white; padding: 8px 15px; 
-                  text-decoration: none; border-radius: 6px; font-size: 14px;margin-left: 5px;" href="{% url 'bug_report_create_with_ticket' ticket.id %}">Raise Problem</a>
+                  text-decoration: none; border-radius: 6px; font-size: 14px;" href="{% url 'bug_report_create_with_ticket' ticket.id %}">Raise Problem</a>
 {% endif %}
-
+</div>
 
 
 
 <div style="display: flex;flex-direction: column;">
-
-{% if Outputs %}
-<h3>Outputs:</h3>
-<table>
-    <tr>
-        <th>#</th>
-        <th>File</th>
-        <th>Uploaded By</th>
-        <th>Uploaded On</th>
-    </tr>
-    {% for attachment in Outputs %}
-    <tr>
-        <td  style="width: fit-content;">
-            O{{ forloop.counter }}
-        </td>
-        <td style="width: fit-content;">
-            <a href="{{ attachment.file.url }}">{{ attachment.file.name|cut:"ticket_attachments/" }}</a>
-        </td>
-        <td  style="width: fit-content;">
-            {{ attachment.uploaded_by }}
-        </td>
-        <td  style="width: fit-content;">
-            {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
-        </td>
-    </tr>
-    {% empty %}
-        <tr>No Outputs.</tr>
-    {% endfor %}
-</table>
-{% endif %}
-
-{% if bugs %}
+{% if bugs  %}
 <h3 style="color: red;">Bug:</h3>
 <table class="bugTable">
     <tr>
@@ -144,7 +134,38 @@
     {% endfor %}
 </table>
 {% endif %}
+{% if Outputs %}
+<h3>Outputs:</h3>
+<table>
+    <tr>
+        <th>#</th>
+        <th>File</th>
+        <th>Uploaded By</th>
+        <th>Uploaded On</th>
+    </tr>
+    {% for attachment in Outputs %}
+    <tr>
+        <td  style="width: fit-content;">
+            O{{ forloop.counter }}
+        </td>
+        <td style="width: fit-content;">
+            <a href="{{ attachment.file.url }}">{{ attachment.file.name|cut:"ticket_attachments/" }}</a>
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_by }}
+        </td>
+        <td  style="width: fit-content;">
+            {{ attachment.uploaded_at|date:"Y-m-d H:i" }}
+        </td>
+    </tr>
+    {% empty %}
+        <tr>No Outputs.</tr>
+    {% endfor %}
+</table>
+{% endif %}
 
+
+{% endif %}
 
 <h3>Attachments:</h3>
 <ul>
@@ -156,5 +177,6 @@
     {% endfor %}
 </ul>
 <br>
+</div>
 </div>
 {% endblock %}

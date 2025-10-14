@@ -53,7 +53,7 @@ def customer_dashboard(request):
         pending=taskDetails[1]
         if total==0:
             per=0
-        elif pending==0 and tic.status!="Resolved":
+        elif pending==0 and (tic.status!="Resolved" and tic.status!="Closed"):
             per=95
         else:
             per=int(((total-pending)/total)*100)
@@ -165,9 +165,13 @@ def ticket_list_admin(request):
         tic.Notification=responses
     return render(request, 'customer/ticket_list_admin.html', {'tickets': tickets})
 
-@admin_required
+# @admin_required
 def ticket_update_status(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+    if request.method=='GET' and request.GET.get("ticket_id"):
+        ticket.status="Canceled"
+        ticket.save()
+        return redirect('Client_ticket_detail',ticket_id)
     if request.method == 'POST':
         form = TicketStatusForm(request.POST, instance=ticket)
         if form.is_valid():
@@ -364,6 +368,8 @@ def bug_report_create(request, ticket_id=None):
             bug_report = form.save(commit=False)
             bug_report.reporter = request.user
             if ticket:
+                ticket.status="Pending"
+                ticket.save()
                 bug_report.related_ticket = ticket
             bug_report.save()
             return redirect('Client_ticket_detail',ticket_id)

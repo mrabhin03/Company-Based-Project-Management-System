@@ -67,9 +67,9 @@ def dashboard(request):
         total_employees = EmployeeProfile.objects.count()
         total_departments = Department.objects.count()
 
-        total_tickets = Ticket.objects.count()
+        total_tickets = Ticket.objects.exclude(status='Canceled').count()
         in_progress_tickets = Ticket.objects.filter(status='In Progress').count()
-        completed_tickets = Ticket.objects.filter(status='Resolved').count()
+        completed_tickets = Ticket.objects.filter(status__in=['Resolved','Closed']).exclude(status='Canceled').count()
         pending_tickets = total_tickets-completed_tickets
         ticket_progress = {
             'pending': pending_tickets,

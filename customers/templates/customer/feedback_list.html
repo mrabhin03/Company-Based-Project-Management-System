@@ -57,7 +57,7 @@
                 {% for fb in feedbacks %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ fb.ticket.subject }}</td>
+                    <td style="max-width: 200px;">{{ fb.ticket.subject }}</td>
                     <td>{{ fb.ticket.customer.user.name }}</td>
                     <td>
                         <span class="stars">
@@ -70,7 +70,7 @@
                             {% endfor %}
                         </span>
                     </td>
-                    <td>{{ fb.comment|default:"—" }}</td>
+                    <td style="max-width: 200px;">{{ fb.comment|default:"—" }}</td>
                     <td>{{ fb.created_at|date:"d M Y H:i" }}</td>
                     <td><a href="{% url 'ticket_detail' fb.ticket.id %}">View details</a></td>
                 </tr>
