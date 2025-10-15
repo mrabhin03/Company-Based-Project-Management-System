@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <title> My Help </title>
+  <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.css' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <link href="{% static 'font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'style.css' %}" rel="stylesheet" />
+  <link href="{% static 'responsive.css' %}" rel="stylesheet" />
+
+</head>
+
+<body>
+
+  <div class="hero_area">
+
+    <div class="hero_bg_box">
+      <div class="bg_img_box">
+        <img src="{% static 'hero-bg.png' %}" alt="">
+      </div>
+    </div>
+
+    <!-- header section strats -->
+    <header class="header_section" style="background-color: rgba(0, 0, 0, 0.133);">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+          <a class="navbar-brand" target="_blank" href="">
+            <span>
+              My Help
+            </span>
+          </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class=""> </span>
+          </button>
+
+        </nav>
+      </div>
+    </header>
+    <section class="slider_section ">
+      <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="container ">
+              <div class="row">
+                <div class="col-md-6 ">
+                  <div class="detail-box">
+                    <h1>
+                      My Help
+                    </h1>
+                    <p>
+                        <b style="font-size: 17px;">Global Leaders in Business Management Solutions</b><br>
+                        At MyHelp, we are committed to transforming the way organizations operate worldwide. Our innovative solutions empower companies to manage projects, teams, and customer relationships with efficiency, security, and ease. Trusted by enterprises across the globe, MyHelp delivers scalable technology that supports your growth and success—wherever you do business.
+                    </p>
+                    <div class="btn-box">
+                      <a href="{% url 'customer_login'%}" class="btn1" style="border-radius: 5px;">
+                        Get Started
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="img-box">
+                    <img style="border-radius: 10px;" src="{% static 'Project.jpg' %}" alt="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+    </section>
+  </div>
+  <section class="service_section layout_padding">
+    <div class="service_container">
+      <div class="container ">
+        <div class="heading_container heading_center">
+            <h2>
+                Intro <span>Video</span>
+            </h2>
+            <p>
+                See how <b>MyHelp</b> transforms the way you manage your business! This short introduction highlights our platform’s powerful features—streamlined project tracking, real-time support, and effortless collaboration—all designed to simplify your workflow and elevate your experience. Discover why businesses around the world choose MyHelp. Watch now!
+            </p>
+            </div>
+            <iframe style="width:100%; height:75vh; background-color: lightgray; border: none; border-radius: 20px;" src="{% static 'Logo.mp4' %}" title="MyHelp Platform Introduction" allowfullscreen></iframe>
+            <div class="btn-box">
+            <a href="{% url 'customer_login'%}" style="border-radius: 5px;">
+                Get Started
+            </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="about_section layout_padding" style="background-color: #1a105f;">
+    <div class="container  ">
+      <div class="heading_container heading_center">
+        <h2>
+          About <span>Us</span>
+        </h2>
+      </div>
+      <div class="row">
+        <div class="col-md-6 ">
+          <div class="img-box" style="width: 85%;margin:0 auto;">
+            <img style="border-radius: 15px;" src="{% static 'Logo.png' %}" alt="">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="detail-box">
+            <h3>
+                We Are <span style="color: #00bbf0;">MyHelp</span>
+            </h3>
+            <p>
+                At <b style="color: #5d36f6;">MyHelp</b>, we are a global leader in business solutions, uniting innovation, expertise, and technology to empower organizations around the world. With a presence across continents and a diverse team of talented professionals, we deliver results that drive progress and transform industries.
+                <br><br>
+                <b style="color: #5d36f6;">From startups to global enterprises</b>, MyHelp partners with clients to deliver customized, scalable solutions that meet the demands of a rapidly changing world. Our commitment to excellence, integrity, and client satisfaction is at the heart of everything we do.
+                <br><br>
+                Whether you are looking for advanced digital transformation, seamless project management, or world-class customer support, MyHelp is your trusted partner. We leverage cutting-edge technologies and a spirit of continuous improvement to help businesses thrive in the digital era.
+                <br><br>
+                At MyHelp, we believe in building lasting partnerships and creating value that goes beyond business. <b style="color: #5d36f6;">"Empowering Success, Together."</b>
+            </p>
+            <p>
+                Join thousands of satisfied clients who trust MyHelp to deliver innovative solutions for a smarter, more connected future.
+            </p>
+            <a style="border-radius: 5px;" target="_blank" href="#">
+                Read More
+            </a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</body>
+
+</html>

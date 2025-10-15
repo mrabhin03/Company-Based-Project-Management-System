@@ -10,7 +10,7 @@ urlpatterns = [
     path('tasks/', include('tasks.urls')),
     path('performance/', include('performance.urls')),
     path('customers/', include('customers.urls')),
-    path('', include('customers.urls')),
+    path('', include('users.urls')),
 
 ]
 

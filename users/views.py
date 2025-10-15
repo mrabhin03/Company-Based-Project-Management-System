@@ -18,6 +18,11 @@ from collections import OrderedDict
 
 User = get_user_model()
 
+
+def home(request):
+    return render(request, 'users/indexOfAll.html')
+
+
 def is_admin(user):
     return user.is_authenticated and user.role == User.ROLE_ADMIN
 
