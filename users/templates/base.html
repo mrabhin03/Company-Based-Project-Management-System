@@ -409,12 +409,12 @@ a{
         <li><a href="{% url 'performance_overview' %}" class="nav-btn" data-btn="page17">Reports</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
     {% elif request.user.role == 'EMPLOYEE' %}
-        <li><a href="{% url 'task_list_employee' %}">My Tasks {% if request.user.PendingTasks and request.user.PendingTasks != 0%}<p class="pending_icon">{{ request.user.PendingTasks }}</p>{%endif %}</a></li>
-        <li><a href="{% url 'payroll_list' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page18">My Payroll</a></li>
-        <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page19">My Profile </a></li>
+        <li><a href="{% url 'task_list_employee' %}" class="nav-btn" data-btn="page18">My Tasks {% if request.user.PendingTasks and request.user.PendingTasks != 0%}<p class="pending_icon">{{ request.user.PendingTasks }}</p>{%endif %}</a></li>
+        <li><a href="{% url 'payroll_list' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page19">My Payroll</a></li>
+        <li><a href="{% url 'view_profile' request.user.employeeprofile.id %}" class="nav-btn" data-btn="page20">My Profile </a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
     {% else %}
-        <li><a href="{% url 'customer_profile' %}" class="nav-btn" data-btn="page20">My Profile</a></li>
+        <li><a href="{% url 'customer_profile' %}" class="nav-btn" data-btn="page21">My Profile</a></li>
         <li><a href="{% url 'customer_logout' %}">Logout</a></li>
     {% endif %}
 </ul>
@@ -435,10 +435,18 @@ a{
 
         window.addEventListener('DOMContentLoaded', () => {
         const active = localStorage.getItem('activeButton');
-        console.log(active)
+        flag=0
         if (active) {
             document.querySelectorAll('.nav-btn').forEach(btn => {
+            if(btn.dataset.btn === active){
+                flag=1
+            }
             btn.classList.toggle('active', btn.dataset.btn === active);
+            });
+        }
+        if(flag==0){
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.btn === "page1");
             });
         }
         });

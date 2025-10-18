@@ -7,8 +7,6 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('performance/', views.department_performance, name='department_performance'),
-    path('performance/<int:department_id>/', views.department_performance, name='department_performance_detail'),
 
     # employee management
     path('employees/', views.employee_list, name='employee_list'),

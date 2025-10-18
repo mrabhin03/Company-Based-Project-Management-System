@@ -105,6 +105,8 @@ input::placeholder {
     <button type="submit" style="margin-bottom: 10px;">Login</button>
     <a href="{% url 'customer_register' %}"><button type="button" style="background-color: gray;">Register</button></a>
 </form>
-
+<script>
+    localStorage.removeItem('activeButton');
+</script>
     
 </body>
